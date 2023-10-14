@@ -1,3 +1,3 @@
 [submodule "kmer-over-docker"]
-	path = kmer-over-docker
+	path = kmer-raw
 	url = https://github.com/antoniogrv/kmer-over-docker
