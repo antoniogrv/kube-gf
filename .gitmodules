@@ -1,3 +1,3 @@
 [submodule "kmer-kubeless"]
 	path = kmer-kubeless
-	url = https://github.com/antoniogrv/kmer-over-docker.git
+	url = https://github.com/antoniogrv/kmer-kubeless.git
