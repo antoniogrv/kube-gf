@@ -1,0 +1,17 @@
+{
+  "name": "kmer-kubeful",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-dataset-train": "docker build -t v1enna/step-dataset-train-config:latest ./step-dataset-train-config",
+    "build-dataset-test": "docker build -t v1enna/step-dataset-test-config:latest ./step-dataset-test-config",
+    "build-dataset-val": "docker build -t v1enna/step-dataset-val-config:latest ./step-dataset-val-config",
+    "build-model-train": "docker build -t v1enna/step-model-train:latest ./step-model-train",
+    "build-model-test": "docker build -t v1enna/step-model-test:latest ./step-model-test",
+    "build-model-persist": "docker build -t v1enna/step-model-persist:latest ./step-model-persist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

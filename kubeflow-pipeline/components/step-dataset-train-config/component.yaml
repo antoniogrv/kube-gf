@@ -1,0 +1,6 @@
+name: Train Dataset Generation
+description: Genera il dataset di training
+
+implementation:
+  container:
+    image: v1enna/step-dataset-train-config:latest
