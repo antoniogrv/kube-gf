@@ -3,4 +3,4 @@ description: Genera il dataset di training
 
 implementation:
   container:
-    image: v1enna/step-dataset-train-config:latest
+    image: localhost:5001/hello-world:linux

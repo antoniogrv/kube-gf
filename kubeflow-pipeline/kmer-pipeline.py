@@ -1,6 +1,7 @@
 import kfp
 from kfp.v2 import dsl
 from kfp.v2.dsl import component
+from kfp.v2 import compiler
 from kfp.v2.dsl import (
     Input,
     Output,
@@ -18,9 +19,5 @@ def kmer_pipeline():
     dataset_train_config = dataset_train_config_op()
 
 client = kfp.Client()
-client.create_run_from_pipeline_func(
-    kmer_pipeline, 
-    arguments={},
-    pipeline_conf=pipeline_conf,
-    mode=kfp.dsl.PipelineExecutionMode.V2_COMPATIBLE
-)
+#compiler.Compiler().compile(kmer_pipeline, package_path='pipeline.yaml')
+client.create_run_from_pipeline_func(kmer_pipeline, arguments={})

@@ -1,3 +1,6 @@
+# Questo manifesto permette di creare un cluster Kubernetes locale con 4 nodi ..
+# .. senza generare anche un Docker Registry per la pipeline.
+
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: kf3-cluster
