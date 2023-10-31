@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reg
+  namespace: kubeflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reg
+  template:
+    metadata:
+      labels:
+        app: reg
+    spec:
+      containers:
+      - name: reg
+        image: registry:latest
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reg
+  namespace: kubeflow
+spec:
+  selector:
+    app: reg
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  
