@@ -34,7 +34,7 @@ Per concludere l'installazione, si invita a creare un ambiente Miniconda tramite
 
 ## Eseguire gli esperimenti
 
-Dopo aver accuratamente eseguiti gli step di installazione del sistema, è sufficiente eseguire in sequenza `npm run forward` e `npm run exec` per avviare una pipeline ed eseguire l'esperimento descritto in `kubeflow-pipelines/kmer-pipeline.py`. Il primo comando esegue il port-forwarding delle Kubeflow Pipelines, mentre il secondo esegue l'esperimento vero e proprio.
+Dopo aver accuratamente applicato le istruzioni di installazione del sistema, è sufficiente eseguire in sequenza `npm run forward` e `npm run exec` per avviare una pipeline ed eseguire l'esperimento descritto in `kubeflow-pipelines/kmer-pipeline.py`. Il primo comando esegue il port-forwarding delle Kubeflow Pipelines, mentre il secondo esegue l'esperimento vero e proprio.
 
 ## Sviluppo della pipeline
 
