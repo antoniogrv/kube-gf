@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-dataset-train": "docker build -t antoniogrv/step-dataset-train-config:kf ./datasets/train-config",
-    "build-dataset-test": "docker build -t antoniogrv/step-dataset-test-config:kf ./datasets/test-config",
-    "build-dataset-val": "docker build -t antoniogrv/step-dataset-val-config:kf ./datasets/val-config",
+    "build-dataset-train": "docker build --build-arg \"dataset_type_arg=train\" -t antoniogrv/step-dataset-train-config:kf ./dataset",
+    "build-dataset-test": "docker build --build-arg \"dataset_type_arg=test\" -t antoniogrv/step-dataset-test-config:kf ./dataset",
+    "build-dataset-val": "docker build --build-arg \"dataset_type_arg=val\" -t antoniogrv/step-dataset-val-config:kf ./dataset",
     "build-model-train": "docker build -t antoniogrv/step-model-train:kf ./model/train",
     "build-model-test": "docker build -t antoniogrv/step-model-test:kf ./model/test",
     "build-model-persist": "docker build -t antoniogrv/step-model-persist:kf ./model/persist"

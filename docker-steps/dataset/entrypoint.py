@@ -2,7 +2,9 @@ from typing import Optional
 from typing import Dict
 
 from dotenv import load_dotenv
+
 import os
+import argparse
 
 from tokenizer import MyDNATokenizer
 from tokenizer import DNABertTokenizer
@@ -14,6 +16,7 @@ from utils import define_gene_classifier_inputs
 
 
 def entrypoint(
+        type: str,
         len_read: int,
         len_kmer: int,
         n_words: int,
@@ -24,6 +27,9 @@ def entrypoint(
         re_train: bool,
         grid_search: bool,
 ):
+    if type not in ['test', 'train', 'val']:
+        raise ValueError('Tipologia di dataset non valido')
+
     # get value from .env
     root_dir = 'data'
 
@@ -54,21 +60,38 @@ def entrypoint(
         tokenizer=tokenizer
     )
 
-    print('Preparing Test Dataset...')
+    if type == 'test':
+        print('Preparing Test Dataset...')
 
-    test_dataset = TranscriptDataset(
-        root_dir=root_dir,
-        conf=dataset_conf,
-        dataset_type='test'
-    )
+        test_dataset = TranscriptDataset(
+            root_dir=root_dir,
+            conf=dataset_conf,
+            dataset_type='test'
+        )
 
-    return test_dataset
+    if type == 'train':
+        print('Preparing train Dataset...')
+
+        train_dataset = TranscriptDataset(
+            root_dir=root_dir,
+            conf=dataset_conf,
+            dataset_type='train'
+        )
+
+    if type == 'val':
+        print('Preparing Validation Dataset...')
+
+        val_dataset = TranscriptDataset(
+            root_dir=root_dir,
+            conf=dataset_conf,
+            dataset_type='val'
+        )
+
+    return type
 
 
 if __name__ == '__main__':
     __args, __hyper_parameters = define_gene_classifier_inputs()
-
-    load_dotenv(dotenv_path=os.path.join(os.getcwd(), '.env'))
 
     entrypoint(
         **__args,

@@ -160,15 +160,21 @@ class TranscriptDataset(MyDataset):
                 test_size=0.11
             )
             # group datasets and dataset paths
-            __datasets: List[pd.DataFrame] = [
-                __test_dataset
-            ]
-            __dataset_paths: List[str] = [
-                __test_dataset_path
-            ]
+            if dataset_type == 'test':
+                __datasets: List[pd.DataFrame] = [__test_dataset]
+                __dataset_paths: List[str] = [__test_dataset_path]
+
+            if dataset_type == 'train':
+                __datasets: List[pd.DataFrame] = [__train_dataset]
+                __dataset_paths: List[str] = [__train_dataset_path]
+
+            if dataset_type == 'val':
+                __datasets: List[pd.DataFrame] = [__val_dataset]
+                __dataset_paths: List[str] = [__val_dataset_path]
+
             # generate sentences for each list of kmers
             for i in range(1):
-                print('Generating Sentences... (', i, ')')
+                print('Generating Sentences...')
                 __datasets[i].reset_index(drop=True, inplace=True)
                 # split dataset on processes
                 rows_for_each_process: List[Tuple[int, int]] = split_dataset_on_processes(
