@@ -1,0 +1,4 @@
+/artifacts/**
+!/artifacts/.gitkeep
+/.idea/
+**/__pycache__/

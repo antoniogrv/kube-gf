@@ -1,0 +1,23 @@
+{
+	"name": "kmer-kubeful",
+  	"author": "Antonio Gravino",
+  	"scripts": {
+    	"build-dataset-train-image": "docker build --build-arg \"dataset_type_arg=train\" -t antoniogrv/step-dataset-train-config:kf ./docker-steps/dataset",
+    	"tag-dataset-train-image": "docker tag antoniogrv/step-dataset-train-config:kf localhost:5001/step-dataset-train-config:kf",
+    	"push-dataset-train-image": "docker push localhost:5001/step-dataset-train-config:kf",
+    	"migrate-dataset-train-image": "npm run build-dataset-train-image && npm run tag-dataset-train-image && npm run push-dataset-train-image",
+
+    	"build-dataset-test-image": "docker build --build-arg \"dataset_type_arg=test\" -t antoniogrv/step-dataset-test-config:kf ./docker-steps/dataset",
+    	"tag-dataset-test-image": "docker tag antoniogrv/step-dataset-test-config:kf localhost:5001/step-dataset-test-config:kf",
+    	"push-dataset-test-image": "docker push localhost:5001/step-dataset-test-config:kf",
+    	"migrate-dataset-test-image": "npm run build-dataset-test-image && npm run tag-dataset-test-image && npm run push-dataset-test-image",
+
+		"build-dataset-val-image": "docker build --build-arg \"dataset_type_arg=val\" -t antoniogrv/step-dataset-val-config:kf ./docker-steps/dataset",
+    	"tag-dataset-val-image": "docker tag antoniogrv/step-dataset-val-config:kf localhost:5001/step-dataset-val-config:kf",
+    	"push-dataset-val-image": "docker push localhost:5001/step-dataset-val-config:kf",
+    	"migrate-dataset-val-image": "npm run build-dataset-val-image && npm run tag-dataset-val-image && npm run push-dataset-val-image",
+
+		"forward": "kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80",
+      	"exec": "conda activate kf && python kubeflow-pipeline/kmer-pipeline.py"
+  	}
+}

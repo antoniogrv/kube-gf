@@ -1,0 +1,6 @@
+name: Test Dataset Generation
+description: Genera il dataset di testing
+
+implementation:
+  container:
+    image: localhost:5001/step-dataset-test-config:kf

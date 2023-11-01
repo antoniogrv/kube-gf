@@ -1,0 +1,6 @@
+name: Validation Dataset Generation
+description: Genera il dataset di validazione
+
+implementation:
+  container:
+    image: localhost:5001/step-dataset-val-config:kf

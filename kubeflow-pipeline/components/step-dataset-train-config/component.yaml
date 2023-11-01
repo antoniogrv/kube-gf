@@ -3,4 +3,4 @@ description: Genera il dataset di training
 
 implementation:
   container:
-    image: localhost:5001/hello-world:linux
+    image: localhost:5001/step-dataset-train-config:kf
