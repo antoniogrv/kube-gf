@@ -3,4 +3,10 @@ description: Genera il dataset di training
 
 implementation:
   container:
-    image: localhost:5001/step-dataset-train-config:kf
+    image: localhost:5001/step-dataset-generation-config:kf
+    command: [
+      python,
+      'entrypoint.py',
+      -type,
+      train
+    ]

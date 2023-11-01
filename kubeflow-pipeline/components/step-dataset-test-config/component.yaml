@@ -3,4 +3,10 @@ description: Genera il dataset di testing
 
 implementation:
   container:
-    image: localhost:5001/step-dataset-test-config:kf
+    image: localhost:5001/step-dataset-generation-config:kf
+    command: [
+      python,
+      'entrypoint.py',
+      -type,
+      test
+    ]

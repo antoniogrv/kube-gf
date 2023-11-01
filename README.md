@@ -32,6 +32,10 @@ Una volta completati i passaggi precedenti, è possibile effettuare il port-forw
 
 Per concludere l'installazione, si invita a creare un ambiente Miniconda tramite `conda create -n kf python=3.8.18`, attivarlo con `conda activate kf` e installare le dipendenze Python necessarie tramite `pip install -r kubeflow-pipeline/requirements.txt`. Una volta fatto, sarà possibile interagire col sistema tramite `python kubeflow-pipeline/kmer-pipeline.py`.
 
+## Eseguire gli esperimenti
+
+Dopo aver accuratamente eseguiti gli step di installazione del sistema, è sufficiente eseguire in sequenza `npm run forward` e `npm run exec` per avviare una pipeline ed eseguire l'esperimento descritto in `kubeflow-pipelines/kmer-pipeline.py`. Il primo comando esegue il port-forwarding delle Kubeflow Pipelines, mentre il secondo esegue l'esperimento vero e proprio.
+
 ## Sviluppo della pipeline
 
 *Il contenuto di questa sezione è temporaneo.*
@@ -42,7 +46,7 @@ Il sistema, così come installato, genera un container Docker con un Registry lo
 
 ### Creazione dei componenti
 
-A linee generali, un componente per la pipeline dev'essere prima di tutto un'immagine Docker. Per creare un'immagine Docker, è necessario creare un file `Dockerfile` che definisca il contenuto dell'immagine stessa. Fare riferimento alla directory docker-steps per alcuni esempi.
+A linee generali, un componente per la pipeline dev'essere prima di tutto un'immagine Docker. Per creare un'immagine Docker, è necessario creare un file `Dockerfile` che definisca il contenuto dell'immagine stessa. Fare riferimento alla directory `docker-steps` per alcuni esempi.
 
 L'immagine Docker deve quindi essere opportunamente taggata e pushata sul Docker Registry di Kind; inoltre, sarà necessario creare un file `component.yaml` che definisca il componente stesso. Di seguito un esempio di manifesto per un componente.
 
