@@ -29,7 +29,7 @@ if __name__ == '__main__':
     dataset_val_config_op = kfp.components.load_component_from_file(component_path("step-dataset-val-config"))
 
     # Compilazione della pipeline
-    compiler.Compiler().compile(kmer_pipeline, package_path=os.path.join(os.path.dirname(__file__), 'artifacts/pipeline.yaml'))
+    compiler.Compiler().compile(kmer_pipeline, package_path=os.path.join(os.path.dirname(__file__), 'relics/pipeline.yaml'))
 
     # Esecuzione della pipeline
     client = kfp.Client()

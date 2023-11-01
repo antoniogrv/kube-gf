@@ -1,4 +1,4 @@
-/artifacts/**
-!/artifacts/.gitkeep
+/relics/**
+!/relics/.gitkeep
 /.idea/
 **/__pycache__/
