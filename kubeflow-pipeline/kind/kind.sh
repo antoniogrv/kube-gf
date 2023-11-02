@@ -16,9 +16,13 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
+  gpus: True
 - role: worker
+  gpus: True
 - role: worker
+  gpus: True
 - role: worker
+  gpus: True
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry]
@@ -48,3 +52,18 @@ data:
     host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
+
+kubectl cluster-info --context kind-kind
+
+kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=2.0.2"
+
+kubectl wait --for condition=established --timeout=60s crd/applications.app.k8s.io
+
+kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-pns?ref=2.0.2"
+
+helm repo add nvidia https://nvidia.github.io/gpu-operator && helm repo update
+
+helm install --wait --generate-name \
+     -n gpu-operator --create-namespace \
+     nvidia/gpu-operator \
+     --set driver.enabled=false

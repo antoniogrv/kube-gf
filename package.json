@@ -7,6 +7,11 @@
     	"push-dataset-generation-image": "docker push localhost:5001/step-dataset-generation-config:kf",
     	"migrate-dataset-generation-image": "npm run build-dataset-generation-image && npm run tag-dataset-generation-image && npm run push-dataset-generation-image",
 
+		"build-model-image": "docker build -t antoniogrv/step-model-config:kf ./docker-steps/model",
+    	"tag-model-image": "docker tag antoniogrv/step-model-config:kf localhost:5001/step-model-config:kf",
+    	"push-model-image": "docker push localhost:5001/step-model-config:kf",
+    	"migrate-model-image": "npm run build-model-image && npm run tag-model-image && npm run push-model-image",
+
 		"forward": "kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80",
       	"exec": "conda activate kf && python kubeflow-pipeline/kmer-pipeline.py"
   	}

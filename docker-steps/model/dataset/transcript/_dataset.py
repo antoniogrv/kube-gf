@@ -48,7 +48,7 @@ class TranscriptDataset(MyDataset):
         print('Reading labels...')
         self.__labels_path: str = os.path.join(self.inputs_dir, 'transcript_label.pkl')
         with open(self.__labels_path, 'rb') as handle:
-                self.__labels: Dict[str, int] = pickle.load(handle)
+            self.__labels: Dict[str, int] = pickle.load(handle)
 
         __train_dataset_path: str = os.path.join(
             self.processed_dir,
