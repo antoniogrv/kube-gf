@@ -206,72 +206,20 @@ class TranscriptDataset(MyDataset):
             f'n_words_{conf.n_words}_'
             f'{self.dataset_type}.csv'
         )
+        
         self.__dataset: pd.DataFrame = pd.read_csv(self.__dataset_path)
         self.__status = self.__dataset.groupby('label')['label'].count()
 
-        # ==================== Create inputs for model ==================== #
-        print('Evaluating Model Inputs...')
-        self.__inputs_path: str = os.path.join(
-            self.inputs_dir,
-            f'transcript_{conf.len_read}_'
-            f'kmer_{conf.len_kmer}_'
-            f'n_words_{conf.n_words}_'
-            f'tokenizer_{conf.tokenizer}_'
-            f'{self.dataset_type}.pkl'
-        )
-        print('Inputs Path: ', self.__inputs_path)
-        # check if inputs tensor are already generateds
-        generation_inputs_phase: bool = generation_sets_phase_flag and self.check_file(self.__inputs_path)
-        if not generation_inputs_phase:
-            print('Generating Model Inputs...')
-            # get number of processes
-            n_proc: int = 1
-            # init inputs
-            self.__inputs: List[Dict[str, torch.Tensor]] = []
-            # check if n_proc is greater then 1
-            if n_proc == 1:
-                # call encode sentences on single process
-                self.__inputs: List[Dict[str, torch.Tensor]] = encode_sentences(
-                    rows_index=(0, len(self.__dataset)),
-                    dataset=self.__dataset,
-                    n_words=conf.n_words,
-                    tokenizer=conf.tokenizer
-                )
-            else:
-                # split dataset on processes
-                rows_for_each_process: List[Tuple[int, int]] = split_dataset_on_processes(
-                    self.__dataset,
-                    n_proc
-                )
-                # call encode sentences on multi processes
-                with Pool(n_proc) as pool:
-                    results = pool.imap(partial(
-                        encode_sentences,
-                        dataset=self.__dataset,
-                        n_words=conf.n_words,
-                        tokenizer=conf.tokenizer
-                    ), rows_for_each_process)
-                    # append all local inputs to global inputs
-                    for local_inputs in results:
-                        self.__inputs += local_inputs
-            with open(self.__inputs_path, 'wb') as handle:
-                print('Pickle-dumping Data...')
-                pickle.dump(self.__inputs, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            self.update_file(self.__inputs_path)
-            print('Done!')
-        # load inputs
-        else:
-            print('Skipping Model Inputs Generation...')
-            with open(self.__inputs_path, 'rb') as handle:
-                print('Pickle-loading Data...')
-                self.__inputs: List[Dict[str, torch.Tensor]] = pickle.load(handle)
-                print('Done!')
+        print('Done!')
 
     def get_labels_dict(self) -> Dict[str, int]:
         return self.__labels
 
     def get_dataset_status(self):
         return self.__status
+    
+    def get_dataset(self):
+        return self.__dataset
 
     def print_dataset_status(self) -> str:
         table: List[List[Union[Hashable, Series]]] = [[label, record] for label, record in self.__status.items()]

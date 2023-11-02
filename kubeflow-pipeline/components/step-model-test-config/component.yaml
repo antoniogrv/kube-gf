@@ -1,0 +1,23 @@
+name: Model Testing
+description: Effettua il testing del modello
+
+inputs:
+- {name: test_csv_path, type: String, description: 'Test CSV path.'}
+- {name: model_path, type: String, description: 'H5 Model path.'}
+
+outputs:
+- {name: results_path, type: String, description: 'CSV results path.'}
+
+implementation:
+  container:
+    image: localhost:5001/step-model-config:latest
+    command: [
+      python3.9,
+      'entrypoint.py',
+      -test_csv_path, 
+      {inputPath: test_csv_path},
+      -model_path, 
+      {inputPath: model_path},
+      -results_path, 
+      {outputPath: results_path}
+    ]

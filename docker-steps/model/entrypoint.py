@@ -36,6 +36,11 @@ from utils import close_loggers
 
 
 def entrypoint(
+        test_csv_path: str,
+        train_csv_path: str,
+        val_csv_path: str,
+        model_path: str,
+        results_path: str,
         len_read: int,
         len_kmer: int,
         n_words: int,
@@ -46,7 +51,7 @@ def entrypoint(
         re_train: bool,
         grid_search: bool,
 ) -> Tuple[str, MyModelConfig]:
-
+    
     # get value from .env
     root_dir: Final = 'data'
 
@@ -92,7 +97,7 @@ def entrypoint(
     model_name: str = 'model'
 
     # init test
-    parent_dir, test_dir, log_dir, model_dir, model_path = init_test(
+    parent_dir, test_dir, log_dir, model_dir = init_test(
         result_dir=result_dir,
         task=task,
         model_selected=model_selected,
@@ -104,6 +109,9 @@ def entrypoint(
     # if the model has not yet been trained
     if not os.path.exists(model_path):
         print('Model not present. Proceeding with training.')
+
+        model_save_dir = os.path.dirname(model_path)
+        if not os.path.isdir(model_save_dir): os.makedirs(model_save_dir)
 
         # init loggers
         logger: logging.Logger = setup_logger(
@@ -120,13 +128,19 @@ def entrypoint(
         train_dataset = TranscriptDataset(
             root_dir=root_dir,
             conf=dataset_conf,
-            dataset_type='train'
+            dataset_type='train',
+            train_csv_path=train_csv_path,
+            test_csv_path="",
+            val_csv_path=val_csv_path,
         )
         print('Preparing Validation Dataset for consumption...')
         val_dataset = TranscriptDataset(
             root_dir=root_dir,
             conf=dataset_conf,
-            dataset_type='val'
+            dataset_type='val',
+            val_csv_path=val_csv_path,
+            train_csv_path=train_csv_path,
+            test_csv_path="",
         )
 
         # log information
@@ -224,6 +238,9 @@ def entrypoint(
     else:
         print('Model is present. Proceeding with testing.')
 
+        results_save_dir = os.path.dirname(results_path)
+        if not os.path.isdir(results_save_dir): os.makedirs(results_save_dir)
+
         # init loggers
         logger: logging.Logger = setup_logger(
             'logger',
@@ -238,7 +255,10 @@ def entrypoint(
         test_dataset = TranscriptDataset(
             root_dir=root_dir,
             conf=dataset_conf,
-            dataset_type='test'
+            dataset_type='test',
+            train_csv_path="",
+            val_csv_path="",
+            test_csv_path=test_csv_path,
         )
 
         # log test dataset status
@@ -285,7 +305,7 @@ def entrypoint(
         # save result
         print('Saving results...')
         save_result(
-            result_csv_path=os.path.join(parent_dir, 'results.csv'),
+            result_csv_path=results_path,
             len_read=len_read,
             len_kmer=len_kmer,
             n_words=n_words,

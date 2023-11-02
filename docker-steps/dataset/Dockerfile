@@ -41,8 +41,4 @@ COPY . .
 COPY --from=dnabert transformers/ /transformers
 COPY --from=transcripts transcripts/ /data/transcripts/
 
-ARG dataset_type_arg
-ENV dataset_type_env=$dataset_type_arg
-
-RUN echo "Preparazione del dataset di $dataset_type_env"
-ENTRYPOINT python entrypoint.py -type $dataset_type_env 
+ENTRYPOINT python entrypoint.py

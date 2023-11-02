@@ -35,11 +35,12 @@ RUN python3.9 -m pip install -r requirements.txt --ignore-installed
 
 FROM scratch as fs
 
-COPY --from=antoniogrv/step-dataset-generation-config:kf transformers/ /transformers
+COPY --from=antoniogrv/step-dataset-generation-config:latest transformers/ /transformers
 COPY . .
 
 FROM cuda as core
 
 COPY --from=fs . .
+COPY deps/transcript_label.pkl data/inputs_model/transcript_label.pkl
 
 ENTRYPOINT python3.9 entrypoint.py

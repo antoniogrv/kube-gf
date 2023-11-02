@@ -2,14 +2,14 @@
 	"name": "kmer-kubeful",
   	"author": "Antonio Gravino",
   	"scripts": {
-    	"build-dataset-generation-image": "docker build --build-arg \"dataset_type_arg=generation\" -t antoniogrv/step-dataset-generation-config:kf ./docker-steps/dataset",
-    	"tag-dataset-generation-image": "docker tag antoniogrv/step-dataset-generation-config:kf localhost:5001/step-dataset-generation-config:kf",
-    	"push-dataset-generation-image": "docker push localhost:5001/step-dataset-generation-config:kf",
+    	"build-dataset-generation-image": "docker build -t antoniogrv/step-dataset-generation-config:latest ./docker-steps/dataset",
+    	"tag-dataset-generation-image": "docker tag antoniogrv/step-dataset-generation-config:latest localhost:5001/step-dataset-generation-config:latest",
+    	"push-dataset-generation-image": "docker push localhost:5001/step-dataset-generation-config:latest",
     	"migrate-dataset-generation-image": "npm run build-dataset-generation-image && npm run tag-dataset-generation-image && npm run push-dataset-generation-image",
 
-		"build-model-image": "docker build -t antoniogrv/step-model-config:kf ./docker-steps/model",
-    	"tag-model-image": "docker tag antoniogrv/step-model-config:kf localhost:5001/step-model-config:kf",
-    	"push-model-image": "docker push localhost:5001/step-model-config:kf",
+		"build-model-image": "docker build -t antoniogrv/step-model-config:latest ./docker-steps/model",
+    	"tag-model-image": "docker tag antoniogrv/step-model-config:latest localhost:5001/step-model-config:latest",
+    	"push-model-image": "docker push localhost:5001/step-model-config:latest",
     	"migrate-model-image": "npm run build-model-image && npm run tag-model-image && npm run push-model-image",
 
 		"forward": "kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80",

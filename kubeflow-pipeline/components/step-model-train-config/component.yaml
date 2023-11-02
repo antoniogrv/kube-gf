@@ -1,0 +1,23 @@
+name: Model Training
+description: Effettua l'addestramento del modello
+
+inputs:
+- {name: train_csv_path, type: String, description: 'Training CSV path.'}
+- {name: val_csv_path, type: String, description: 'Validation CSV path.'}
+
+outputs:
+- {name: model_path, type: String, description: 'H5 Model path.'}
+
+implementation:
+  container:
+    image: localhost:5001/step-model-config:latest
+    command: [
+      python3.9,
+      'entrypoint.py',
+      -train_csv_path, 
+      {inputPath: train_csv_path},
+      -val_csv_path, 
+      {inputPath: val_csv_path},
+      -model_path, 
+      {outputPath: model_path}
+    ]

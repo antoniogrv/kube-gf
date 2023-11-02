@@ -58,4 +58,4 @@ def init_test(
     # check if the model has not already been trained
     model_path: str = os.path.join(model_dir, f'{model_name}.h5')
 
-    return parent_dir, test_dir, log_dir, model_dir, model_path
+    return parent_dir, test_dir, log_dir, model_dir

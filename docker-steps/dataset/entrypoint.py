@@ -4,7 +4,6 @@ from typing import Dict
 from dotenv import load_dotenv
 
 import os
-import argparse
 
 from tokenizer import MyDNATokenizer
 from tokenizer import DNABertTokenizer
@@ -17,6 +16,7 @@ from utils import define_gene_classifier_inputs
 
 def entrypoint(
         type: str,
+        csv_path: str,
         len_read: int,
         len_kmer: int,
         n_words: int,
@@ -27,6 +27,13 @@ def entrypoint(
         re_train: bool,
         grid_search: bool,
 ):
+    print("CSV Path", csv_path)
+
+    save_dir = os.path.dirname(csv_path)
+    
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
+
     if type not in ['test', 'train', 'val']:
         raise ValueError('Tipologia di dataset non valido')
 
@@ -69,6 +76,8 @@ def entrypoint(
             dataset_type='test'
         )
 
+        test_dataset.get_dataset().to_csv(csv_path, index=False)
+
     if type == 'train':
         print('Preparing train Dataset...')
 
@@ -78,6 +87,8 @@ def entrypoint(
             dataset_type='train'
         )
 
+        train_dataset.get_dataset().to_csv(csv_path, index=False)
+
     if type == 'val':
         print('Preparing Validation Dataset...')
 
@@ -86,6 +97,8 @@ def entrypoint(
             conf=dataset_conf,
             dataset_type='val'
         )
+
+        val_dataset.get_dataset().to_csv(csv_path, index=False)
 
     return type
 

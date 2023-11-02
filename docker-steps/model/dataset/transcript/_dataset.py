@@ -34,7 +34,10 @@ class TranscriptDataset(MyDataset):
             self,
             root_dir: str,
             conf: TranscriptDatasetConfig,
-            dataset_type: str
+            dataset_type: str,
+            train_csv_path: str,
+            test_csv_path: str,
+            val_csv_path: str,
     ):
         # call super class
         super().__init__(
@@ -50,46 +53,26 @@ class TranscriptDataset(MyDataset):
         with open(self.__labels_path, 'rb') as handle:
             self.__labels: Dict[str, int] = pickle.load(handle)
 
-        __train_dataset_path: str = os.path.join(
-            self.processed_dir,
-            f'transcript_{conf.len_read}_'
-            f'kmer_{conf.len_kmer}_'
-            f'n_words_{conf.n_words}_'
-            f'train.csv'
-        )
-        __val_dataset_path: str = os.path.join(
-            self.processed_dir,
-            f'transcript_{conf.len_read}_'
-            f'kmer_{conf.len_kmer}_'
-            f'n_words_{conf.n_words}_'
-            f'val.csv'
-        )
-        __test_dataset_path: str = os.path.join(
-            self.processed_dir,
-            f'transcript_{conf.len_read}_'
-            f'kmer_{conf.len_kmer}_'
-            f'n_words_{conf.n_words}_'
-            f'test.csv'
-        )
+        __train_dataset_path: str = train_csv_path
+        __val_dataset_path: str = val_csv_path
+        __test_dataset_path: str = test_csv_path
+
         print('Checking datasets...')
         # check if train, val and test set are already generateds
-        generation_sets_phase_flag: bool = (
+        if type in ['train', 'val']:
+            generation_sets_phase_flag: bool = (
                 self.check_dataset(__train_dataset_path) and
-                self.check_dataset(__val_dataset_path) and
-                self.check_dataset(__test_dataset_path)
-        )
-        if not generation_sets_phase_flag:
-            print('Datasets are corrupted.')
+                self.check_dataset(__val_dataset_path)
+            )
         else:
-            print('Datasets look fine.')
-        # load dataset
-        self.__dataset_path = os.path.join(
-            self.processed_dir,
-            f'transcript_{conf.len_read}_'
-            f'kmer_{conf.len_kmer}_'
-            f'n_words_{conf.n_words}_'
-            f'{self.dataset_type}.csv'
-        )
+            generation_sets_phase_flag: bool = (
+                self.check_dataset(__test_dataset_path)
+            )
+        
+        if dataset_type == 'test': self.__dataset_path = test_csv_path
+        if dataset_type == 'train': self.__dataset_path = train_csv_path
+        if dataset_type == 'val': self.__dataset_path = val_csv_path
+
         self.__dataset: pd.DataFrame = pd.read_csv(self.__dataset_path)
         self.__status = self.__dataset.groupby('label')['label'].count()
 

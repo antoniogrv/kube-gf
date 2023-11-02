@@ -21,6 +21,8 @@ def define_general_parameters(
 ) -> None:
     arg_parser.add_argument('-type', dest='type', action='store',
                             type=str, default="test", help='define dataset type')
+    arg_parser.add_argument('-csv_path', dest='csv_path', action='store',
+                            type=str, default="", help='define csv path')
     arg_parser.add_argument('-len_read', dest='len_read', action='store',
                             type=int, default=150, help='define length of reads')
     arg_parser.add_argument('-len_kmer', dest='len_kmer', action='store',

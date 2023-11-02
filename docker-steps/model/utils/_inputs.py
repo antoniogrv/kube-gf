@@ -19,6 +19,16 @@ def str2bool(v):
 def define_general_parameters(
         arg_parser: argparse.ArgumentParser,
 ) -> None:
+    arg_parser.add_argument('-test_csv_path', dest='test_csv_path', action='store',
+                            type=str, default="", help='test csv path')
+    arg_parser.add_argument('-train_csv_path', dest='train_csv_path', action='store',
+                            type=str, default="", help='train csv path')
+    arg_parser.add_argument('-val_csv_path', dest='val_csv_path', action='store',
+                            type=str, default="", help='val csv path')
+    arg_parser.add_argument('-model_path', dest='model_path', action='store',
+                            type=str, default="", help='test csv path')
+    arg_parser.add_argument('-results_path', dest='results_path', action='store',
+                            type=str, default="", help='results csv path')
     arg_parser.add_argument('-len_read', dest='len_read', action='store',
                             type=int, default=150, help='define length of reads')
     arg_parser.add_argument('-len_kmer', dest='len_kmer', action='store',
