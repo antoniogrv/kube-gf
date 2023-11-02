@@ -1,0 +1,5 @@
+from model.fusion_classifier._fully_connected_config import FCFullyConnectedModelConfig
+from model.fusion_classifier._fully_connected import FCFullyConnected
+
+from model.fusion_classifier._recurrent_nn_config import FCRecurrentNNConfig
+from model.fusion_classifier._recurrent_nn import FCRecurrentNN

@@ -1,0 +1,22 @@
+/.idea/
+
+# tools
+/DNABERT/
+/6-new-12w-0/
+/transformers/
+/fusim-0.2.2/
+
+# generated datas
+/data/transcripts/
+/data/gt_shredder_*/
+/data/fusim_*/
+/data/art_*/
+/data/inputs_model/
+/data/check/
+/data/processed_dir/
+/data/kmer_*.txt
+
+# results
+/results/
+
+**/__pycache__/
