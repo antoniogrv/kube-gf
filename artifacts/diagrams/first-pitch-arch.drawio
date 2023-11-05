@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2023-11-02T19:15:41.270Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="hARRdBfVy5dsYZSuCSSN" version="22.0.2" type="device">
+<mxfile host="Electron" modified="2023-11-03T07:40:05.974Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="ZYk0gHYE2pJY41eeNQ6G" version="22.0.2" type="device">
   <diagram name="Pagina-1" id="CgSllyKP2GWY3ujpmJaR">
-    <mxGraphModel dx="2612" dy="746" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2804" dy="895" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -245,7 +245,7 @@
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-2" value="Step: Generazione del dataset di validation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
           <mxGeometry x="-950" y="160" width="210" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="gtD15Jiia0Fq7UqQ60ZY-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-3" target="6yjqdc-sLgcm6Qk2uJVp-8">
+        <mxCell id="gtD15Jiia0Fq7UqQ60ZY-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-3" target="6yjqdc-sLgcm6Qk2uJVp-8" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="-620" y="435" />
@@ -255,7 +255,7 @@
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-3" value="Step: Generazione del dataset di testing" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
           <mxGeometry x="-730" y="160" width="210" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="gtD15Jiia0Fq7UqQ60ZY-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-5" target="6yjqdc-sLgcm6Qk2uJVp-8">
+        <mxCell id="gtD15Jiia0Fq7UqQ60ZY-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-5" target="6yjqdc-sLgcm6Qk2uJVp-8" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-5" value="Step: Allenamento del modello" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
@@ -270,7 +270,7 @@
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-16" value="Step: Persisti i risultati" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="-950" y="490" width="210" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="6yjqdc-sLgcm6Qk2uJVp-18" value="&quot;State Machine&quot; di GeneFusion a microservizi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=0;fontSize=15;fontFamily=Verdana;" parent="1" vertex="1">
+        <mxCell id="6yjqdc-sLgcm6Qk2uJVp-18" value="&quot;State Machine&quot; di GeneClassifier/FusionClassifier (GF) a microservizi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=0;fontSize=15;fontFamily=Verdana;" parent="1" vertex="1">
           <mxGeometry x="-1170" y="120" width="650" height="30" as="geometry" />
         </mxCell>
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-19" target="6yjqdc-sLgcm6Qk2uJVp-20" edge="1">
@@ -333,7 +333,7 @@
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-39" value="Step: Generazione del dataset di testing" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
           <mxGeometry x="-730" y="700" width="210" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="gtD15Jiia0Fq7UqQ60ZY-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-41" target="6yjqdc-sLgcm6Qk2uJVp-43">
+        <mxCell id="gtD15Jiia0Fq7UqQ60ZY-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-41" target="6yjqdc-sLgcm6Qk2uJVp-43" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-41" value="Step: Allenamento del modello" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
@@ -348,10 +348,10 @@
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-44" value="Step: Persisti i risultati" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="-950" y="1030" width="210" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="6yjqdc-sLgcm6Qk2uJVp-45" value="&quot;State Machine&quot; di GeneFusion a microservizi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=0;fontSize=15;fontFamily=Verdana;" parent="1" vertex="1">
+        <mxCell id="6yjqdc-sLgcm6Qk2uJVp-45" value="&quot;State Machine&quot; di GeneClassifier/FusionClassifier (GF) a microservizi" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=0;fontSize=15;fontFamily=Verdana;" parent="1" vertex="1">
           <mxGeometry x="-1170" y="660" width="650" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="6yjqdc-sLgcm6Qk2uJVp-46" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot; face=&quot;Courier New&quot;&gt;DOPO&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+        <mxCell id="6yjqdc-sLgcm6Qk2uJVp-46" value="&lt;b&gt;&lt;font style=&quot;font-size: 16px;&quot; face=&quot;Courier New&quot;&gt;IDEA&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="-1170" y="660" width="60" height="30" as="geometry" />
         </mxCell>
         <mxCell id="6yjqdc-sLgcm6Qk2uJVp-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="6yjqdc-sLgcm6Qk2uJVp-48" target="6yjqdc-sLgcm6Qk2uJVp-33" edge="1">
