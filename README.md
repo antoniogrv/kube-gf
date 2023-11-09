@@ -1,8 +1,9 @@
 # GeneFusion over Kubernetes
-
-<div style="display: flex; align-items: center; justify-content: center" align="center">
-    <img src="https://camo.githubusercontent.com/bc0c839f32126d45c21472c3ea883223fdaa2efc7d3f82da51fd7907efcbd5bd/68747470733a2f2f7777772e6b756265666c6f772e6f72672f696d616765732f6c6f676f2e737667" alt="logo" width="100">
-    <img style="margin-left: 30px" src="https://kubernetes.io/images/nav_logo2.svg" alt="logo" width="300"></div>
+<div align="center">
+<img align="center" src="https://camo.githubusercontent.com/bc0c839f32126d45c21472c3ea883223fdaa2efc7d3f82da51fd7907efcbd5bd/68747470733a2f2f7777772e6b756265666c6f772e6f72672f696d616765732f6c6f676f2e737667" alt="logo" width="100">
+    &nbsp;&nbsp;&nbsp;&nbsp;
+<img align="center" src="https://kubernetes.io/images/nav_logo2.svg" alt="logo" width="300">
+</div>
 
 ## Introduzione
 
@@ -33,7 +34,7 @@ Infine, per quanto non sia strettamente necessario, si consiglia l'installazione
 
 1. Clonare la repository [kube-gf](https://github.com/antoniogrv/kube-gf) e accertarsi che il Docker Daemon sia in esecuzione.
 
-```properties
+```console
 git clone https://github.com/antoniogrv/kube-gf.git
 cd kube-gf
 sudo systemctl status docker
@@ -41,7 +42,7 @@ sudo systemctl status docker
 
 2. Eseguire lo script di provisioning del cluster locale Kubernetes con supporto per la GPU tramite la CLI di Kind; una volta creato, tarare la CLI di `kubectl` sul nuovo cluster Kind.
   
-```properties
+```console
 chmod +x kube-pipe/kind/boot-kind-gpu.sh
 ./kube-pipe/kind/boot-kind-gpu.sh
 kubectl cluster-info --context kind-kind
@@ -61,13 +62,13 @@ kubectl cluster-info --context kind-kind
 ```
 
 4. Riavviare il Docker Daemon. Successivamente, dare visione della GPU al nodo Kubernetes iniettando un file di configurazione all'interno del container. Si tratta di un workaround per [prevenire alcuni problemi ben noti](https://github.com/NVIDIA/nvidia-docker/issues/614#issuecomment-423991632).
-```properties
+```console
 sudo systemctl restart docker
 docker exec -ti substratus-control-plane ln -s /sbin/ldconfig /sbin/ldconfig.real
 ```
 
 5. Installare il [Kubernetes Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) per il rilevamento e l'etichettamento della disponibilità della GPU sui nodi ([NVIDIA GPU Operator](https://github.com/NVIDIA/gpu-operator#nvidia-gpu-operator)). Quest'operazione potrebbe richiedere diverso tempo.
-```properties
+```console
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia || true
 helm repo update
 helm install --wait --generate-name \
@@ -76,28 +77,28 @@ helm install --wait --generate-name \
 ```
 
 6. Applicare i manifesti [Kubeflow](https://www.kubeflow.org/) al cluster Kubernetes.
-```properties
+```console
 kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=2.0.2"
 kubectl wait --for condition=established --timeout=60s crd/applications.app.k8s.io
 kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-pns?ref=2.0.2"
 ```
 
 7. Poiché l'implementazione del NVIDIA Operator è talvolta imprevedibile, bisogna controverificare che stia operando come previsto. Assicurarsi che il NVIDIA GPU Operator sia effettivamente in esecuzione. Per farlo, consultare lo stato dei [pod](https://kubernetes.io/docs/concepts/workloads/pods/) nel [Kubernetes Namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) `gpu-operator`.
-```properties
+```console
 kubectl get pods -n gpu-operator
 ```
 Qualora i pod dell'operatore non fossero in esecuzione (i.e. `CrashLoopBackOff`, `Error`, etc.), prendere nota dei nomi dei pod faulty (e.g. `nvidia-gpu-operator-xxx`) e distruggerli.
-```properties
+```console
 kubectl delete pod <pod-name> -n gpu-operator
 ```
 I pod distrutti verranno ricreati automaticamente dall'operatore. Una volta confermato il funzionamento dei pod, monitorare i log del pod `nvidia-device-plugin-daemonset-xxx` (o simili) per verificare che la GPU sia stata correttamente rilevata sul nodo esemplificativo `kind-control-plane`. Il corretto funzionamento del DaemonSet è facilmente osservabile, poiché segnalerà di aver aggiornato le risorse del nodo con le GPU rilevate: a questo punto, controverificare che il numero delle GPU rilevate sia quanto atteso nel descrittore del nodo-container `kind-control-plane`; in particolare, confermare che in *Allocatable* sia indicato `nvidia.com/gpu: 1`.
-```properties
+```console
 kubectl logs -f nvidia-device-plugin-daemonset-xxx -n gpu-operator
 kubectl describe node kind-control-plane
 ```
 
 8. Una volta completati i passaggi precedenti, è possibile effettuare il port-forwarding delle Kubeflow Pipelines e accedervi da web browser via `http://localhost:8080`. 
-```properties
+```console
 kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
 ```
 
@@ -120,7 +121,7 @@ I microservizi della pipeline giacciono in un registro Docker self-hosted all'in
 
 Eseguire sequenzialmente i seguenti comandi. 
 
-```properties
+```console
 docker build -t antoniogrv/step-dataset-generation-config:latest ./docker-steps/dataset
 docker tag antoniogrv/step-dataset-generation-config:latest localhost:5001/step-dataset-generation-config:latest
 docker push localhost:5001/step-dataset-generation-config:latest
@@ -130,7 +131,7 @@ docker push localhost:5001/step-dataset-generation-config:latest
 
 Eseguire sequenzialmente i seguenti comandi.
 
-```properties
+```console
 docker build -t antoniogrv/step-model-config:latest ./docker-steps/model
 docker tag antoniogrv/step-model-config:latest localhost:5001/step-model-config:latest
 docker push localhost:5001/step-model-config:latest
@@ -141,18 +142,18 @@ docker push localhost:5001/step-model-config:latest
 Seguire le seguenti istruzioni solo se si intende compilare manualmente la pipeline. Se si intende usare la pipeline pre-compilata, saltare direttamente alla sezione successiva.
 
 1. Creare e attivare l'ambiente Miniconda.
-```properties
+```console
 conda create -n kf python=3.8.18
 conda activate kf
 ```
 
 2. Installare le dipendenze Python necessarie.
-```properties
+```console
 pip install -r kube-pipe/requirements.txt
 ```
 
 3. Eseguire lo script di compilazione, il quale produrrà un artefatto nella directory `kube-pipe/relics`.
-```properties
+```console
 python kube-pipe/kmer-pipeline.py
 ```
 
