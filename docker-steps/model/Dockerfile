@@ -35,7 +35,7 @@ RUN python3.9 -m pip install -r requirements.txt --ignore-installed
 
 FROM scratch as fs
 
-COPY --from=antoniogrv/step-dataset-generation-config:latest transformers/ /transformers
+COPY --from=localhost:5001/step-dataset-generation-config:latest transformers/ /transformers
 COPY . .
 
 FROM cuda as core

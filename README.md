@@ -66,7 +66,7 @@ chmod +x kube-pipe/kind/boot-kind-gpu.sh
 kubectl cluster-info --context kind-kind
 ```
 
-3. Verificare che il contenuto del file `/etc/docker/daemon.json` sia **esattamente** come segue. In caso di difformità, sostituire in toto il contenuto del file con quello indicato.
+3. Verificare che il contenuto del file `/etc/docker/daemon.json` sia **esattamente** come segue. In caso di difformità, sostituire in toto il contenuto del file con quello indicato e riavviare il Docker Daemon con `sudo systemctl restart docker`.
 ```json
 {
   "default-runtime": "nvidia",
@@ -81,8 +81,7 @@ kubectl cluster-info --context kind-kind
 
 4. Riavviare il Docker Daemon. Successivamente, dare visione della GPU al nodo Kubernetes iniettando un file di configurazione all'interno del container. Si tratta di un workaround per [prevenire alcuni problemi ben noti](https://github.com/NVIDIA/nvidia-docker/issues/614#issuecomment-423991632).
 ```
-sudo systemctl restart docker
-docker exec -ti substratus-control-plane ln -s /sbin/ldconfig /sbin/ldconfig.real
+docker exec -ti kind-control-plane ln -s /sbin/ldconfig /sbin/ldconfig.real
 ```
 
 5. Installare il [Kubernetes Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) per il rilevamento e l'etichettamento della disponibilità della GPU sui nodi ([NVIDIA GPU Operator](https://github.com/NVIDIA/gpu-operator#nvidia-gpu-operator)). Quest'operazione potrebbe richiedere diverso tempo.
@@ -140,8 +139,7 @@ I microservizi della pipeline giacciono in un registro Docker self-hosted all'in
 Eseguire il seguente comando. 
 
 ```console
-docker build -t antoniogrv/step-dataset-generation-config:latest ./docker-steps/dataset && \
-docker tag antoniogrv/step-dataset-generation-config:latest localhost:5001/step-dataset-generation-config:latest && \
+docker build -t localhost:5001/step-dataset-generation-config:latest ./docker-steps/dataset && \
 docker push localhost:5001/step-dataset-generation-config:latest
 ```
 
@@ -150,8 +148,7 @@ docker push localhost:5001/step-dataset-generation-config:latest
 Eseguire il seguente comando.
 
 ```console
-docker build -t antoniogrv/step-model-config:latest ./docker-steps/model && \
-docker tag antoniogrv/step-model-config:latest localhost:5001/step-model-config:latest && \
+docker build -t localhost:5001/step-model-config:latest ./docker-steps/model && \
 docker push localhost:5001/step-model-config:latest
 ```
 
