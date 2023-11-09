@@ -57,7 +57,9 @@ sudo systemctl status docker
 ```
 
 2. Eseguire lo script di provisioning del cluster locale Kubernetes con supporto per la GPU tramite la CLI di Kind; una volta creato, tarare la CLI di `kubectl` sul nuovo cluster Kind.
-  
+
+> L'esecuzione dei comandi da terminali di `docker`, `kind` e `kubectl` potrebbe richiedere i privilegi da amministratore (`sudo`).
+
 ```console
 chmod +x kube-pipe/kind/boot-kind-gpu.sh
 ./kube-pipe/kind/boot-kind-gpu.sh
