@@ -1,9 +1,25 @@
-# GeneFusion over Kubernetes
 <div align="center">
 <img align="center" src="https://camo.githubusercontent.com/bc0c839f32126d45c21472c3ea883223fdaa2efc7d3f82da51fd7907efcbd5bd/68747470733a2f2f7777772e6b756265666c6f772e6f72672f696d616765732f6c6f676f2e737667" alt="logo" width="100">
     &nbsp;&nbsp;&nbsp;&nbsp;
 <img align="center" src="https://kubernetes.io/images/nav_logo2.svg" alt="logo" width="300">
+    <h3>GeneFusion over Kubernetes</h3>
+    <p><b>Index Keys:</b> <a href="https://ml-ops.org/">MLOps</a>, <a href="https://www.docker.com/">Docker</a>, <a href="https://kubernetes.io/it/">Kubernetes</a>, <a href="https://www.kubeflow.org/">Kubeflow</a>
 </div>
+
+- [Introduzione](https://github.com/antoniogrv/kube-gf#introduzione)
+- [Installazione del sistema](https://github.com/antoniogrv/kube-gf#installazione-del-sistema)
+- [Eseguire la pipeline](https://github.com/antoniogrv/kube-gf#eseguire-la-pipeline)
+    - [Caricare le immagini Docker](https://github.com/antoniogrv/kube-gf#caricare-le-immagini-docker)
+        - [Dataset Generation Docker Image](https://github.com/antoniogrv/kube-gf#dataset-generation-docker-image)
+        - [Model Training & Testing Docker Image](https://github.com/antoniogrv/kube-gf#model-training--testing-docker-image)
+    - [Compilare la pipeline con Miniconda](https://github.com/antoniogrv/kube-gf#compilare-la-pipeline-con-miniconda)
+    - [Caricare la pipeline su Kubeflow](https://github.com/antoniogrv/kube-gf#caricare-la-pipeline-su-kubeflow)
+- [Sviluppo della pipeline](https://github.com/antoniogrv/kube-gf#sviluppo-della-pipeline)
+  - [Interagire col Docker Registry on-prem](https://github.com/antoniogrv/kube-gf#interagire-col-docker-registry-on-prem)
+  - [Creazione dei componenti](https://github.com/antoniogrv/kube-gf#creazione-dei-componenti)
+- [Considerazioni di MLSecOps](https://github.com/antoniogrv/kube-gf#considerazioni-di-mlsecops)
+
+<hr>
 
 ## Introduzione
 
