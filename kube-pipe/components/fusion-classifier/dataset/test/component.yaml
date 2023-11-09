@@ -1,17 +1,17 @@
-name: Validation Dataset Generation
-description: Genera il dataset di validazione
+name: Test Dataset Generation
+description: Genera il dataset di testing
 
 outputs:
-- {name: csv_path, type: String, description: 'Validation CSV path.'}
+- {name: csv_path, type: String, description: 'Test CSV path.'}
 
 implementation:
   container:
     image: localhost:5001/step-dataset-generation-config:latest
     command: [
       python,
-      'entrypoint.py',
+      'fc_handler.py',
       -type,
-      val,
+      test,
       -csv_path, 
       {outputPath: csv_path}
     ]

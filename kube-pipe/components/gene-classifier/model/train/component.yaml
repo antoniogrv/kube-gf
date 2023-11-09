@@ -13,7 +13,7 @@ implementation:
     image: localhost:5001/step-model-config:latest
     command: [
       python3.9,
-      'entrypoint.py',
+      'gc_handler.py',
       -train_csv_path, 
       {inputPath: train_csv_path},
       -val_csv_path, 

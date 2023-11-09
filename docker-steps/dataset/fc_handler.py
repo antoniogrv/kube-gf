@@ -3,6 +3,7 @@ from typing import Dict
 
 from dotenv import load_dotenv
 
+import argparse
 import os
 
 from tokenizer import MyDNATokenizer
@@ -11,19 +12,29 @@ from tokenizer import DNABertTokenizer
 from dataset import TranscriptDatasetConfig
 from dataset import TranscriptDataset
 
+from dataset import FusionDatasetConfig
+from dataset import FusionDataset
+
 from utils import define_gene_classifier_inputs
+from utils import define_fusion_classifier_inputs
 
 
-def entrypoint(
+def fusion_classifier_entrypoint(
         type: str,
         csv_path: str,
         len_read: int,
         len_kmer: int,
         n_words: int,
         tokenizer_selected: str,
+        n_fusion: int,
+        gc_model_selected: str,
+        gc_hyperparameters: Dict[str, any],
+        gc_batch_size: int,
+        gc_re_train: bool,
         model_selected: str,
-        hyper_parameters: Dict[str, any],
+        fc_hyper_parameters: Dict[str, any],
         batch_size: int,
+        freeze: bool,
         re_train: bool,
         grid_search: bool,
 ):
@@ -58,19 +69,19 @@ def entrypoint(
     
     print('Preparing Dataset Configuration...')    
 
-    dataset_conf: TranscriptDatasetConfig = TranscriptDatasetConfig(
+    dataset_conf: FusionDatasetConfig = FusionDatasetConfig(
         genes_panel_path='data/genes_panel.txt',
-        transcript_dir='data/transcripts',
         len_read=len_read,
         len_kmer=len_kmer,
         n_words=n_words,
-        tokenizer=tokenizer
+        tokenizer=tokenizer,
+        n_fusion=n_fusion,
     )
 
     if type == 'test':
         print('Preparing Test Dataset...')
 
-        test_dataset = TranscriptDataset(
+        test_dataset = FusionDataset(
             root_dir=root_dir,
             conf=dataset_conf,
             dataset_type='test'
@@ -81,7 +92,7 @@ def entrypoint(
     if type == 'train':
         print('Preparing train Dataset...')
 
-        train_dataset = TranscriptDataset(
+        train_dataset = FusionDataset(
             root_dir=root_dir,
             conf=dataset_conf,
             dataset_type='train'
@@ -92,7 +103,7 @@ def entrypoint(
     if type == 'val':
         print('Preparing Validation Dataset...')
 
-        val_dataset = TranscriptDataset(
+        val_dataset = FusionDataset(
             root_dir=root_dir,
             conf=dataset_conf,
             dataset_type='val'
@@ -104,9 +115,10 @@ def entrypoint(
 
 
 if __name__ == '__main__':
-    __args, __hyper_parameters = define_gene_classifier_inputs()
+    __args, __gc_hyperparameters, __hyperparameters = define_fusion_classifier_inputs()
 
-    entrypoint(
+    fusion_classifier_entrypoint(
         **__args,
-        hyper_parameters=__hyper_parameters
+        gc_hyperparameters=__gc_hyperparameters,
+        fc_hyper_parameters=__hyperparameters
     )

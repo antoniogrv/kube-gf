@@ -35,10 +35,39 @@ COPY data/genes_panel.txt data/download_transcripts.py ./
 
 RUN python download_transcripts.py
 
+FROM ubuntu as fusim
+
+RUN apt-get update && \
+    apt-get install wget unzip -y --no-install-recommends
+
+RUN wget https://github.com/aebruno/fusim/raw/master/releases/fusim-0.2.2-bin.zip --no-check-certificate && \
+    unzip fusim-0.2.2-bin.zip && \
+    rm fusim-0.2.2-bin.zip
+
+RUN wget -O refFlat.txt.gz http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/refFlat.txt && \
+    gunzip refFlat.txt.gz && \
+    mv refFlat.txt fusim-0.2.2/refFlat.txt
+
+RUN wget ftp://hgdownload.cse.ucsc.edu/goldenPath/hg19/bigZips/chromFa.tar.gz && \
+    tar -xzf chromFa.tar.gz && \
+    cat chr*.fa > fusim-0.2.2/hg19.fa
+
 FROM pip_dependencies as core
 
-COPY . .
+COPY --from=fusim fusim-0.2.2/scripts /fusim-0.2.2/scripts
+COPY --from=fusim fusim-0.2.2/fusim.jar /fusim-0.2.2/fusim.jar
+COPY --from=fusim fusim-0.2.2/hg19.fa /fusim-0.2.2/hg19.fa
+COPY --from=fusim fusim-0.2.2/refFlat.txt /fusim-0.2.2/refFlat.txt
+
 COPY --from=dnabert transformers/ /transformers
 COPY --from=transcripts transcripts/ /data/transcripts/
 
-ENTRYPOINT python entrypoint.py
+RUN apt-get update && \
+    apt-get install samtools art-nextgen-simulation-tools -y --no-install-recommends && \
+    samtools faidx fusim-0.2.2/hg19.fa
+
+RUN apt-get install default-jre -y --no-install-recommends
+
+COPY . .
+
+ENTRYPOINT python gc_handler.py

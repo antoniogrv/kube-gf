@@ -1,0 +1,19 @@
+name: Validation Dataset Generation
+description: Genera il dataset di validazione
+
+outputs:
+- {name: csv_path, type: String, description: 'Validation CSV path.'}
+
+implementation:
+  container:
+    image: localhost:5001/step-dataset-generation-config:latest
+    command: [
+      python,
+      'handler.py',
+      -operation,
+      gene,
+      -type,
+      val,
+      -csv_path, 
+      {outputPath: csv_path}
+    ]
