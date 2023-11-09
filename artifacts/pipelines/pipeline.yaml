@@ -1,0 +1,158 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: kmer-pipeline-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22, pipelines.kubeflow.org/pipeline_compilation_time: '2023-11-09T09:52:52.731587',
+    pipelines.kubeflow.org/pipeline_spec: '{"name": "kmer-pipeline"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22}
+spec:
+  entrypoint: kmer-pipeline
+  templates:
+  - name: kmer-pipeline
+    dag:
+      tasks:
+      - name: model-testing
+        template: model-testing
+        dependencies: [model-training, test-dataset-generation]
+        arguments:
+          artifacts:
+          - {name: model-training-model_path, from: '{{tasks.model-training.outputs.artifacts.model-training-model_path}}'}
+          - {name: test-dataset-generation-csv_path, from: '{{tasks.test-dataset-generation.outputs.artifacts.test-dataset-generation-csv_path}}'}
+      - name: model-training
+        template: model-training
+        dependencies: [train-dataset-generation, validation-dataset-generation]
+        arguments:
+          artifacts:
+          - {name: train-dataset-generation-csv_path, from: '{{tasks.train-dataset-generation.outputs.artifacts.train-dataset-generation-csv_path}}'}
+          - {name: validation-dataset-generation-csv_path, from: '{{tasks.validation-dataset-generation.outputs.artifacts.validation-dataset-generation-csv_path}}'}
+      - {name: test-dataset-generation, template: test-dataset-generation}
+      - {name: train-dataset-generation, template: train-dataset-generation}
+      - {name: validation-dataset-generation, template: validation-dataset-generation}
+  - name: model-testing
+    container:
+      args: []
+      command: [python3.9, entrypoint.py, -test_csv_path, /tmp/inputs/test_csv_path/data,
+        -model_path, /tmp/inputs/model_path/data, -results_path, /tmp/outputs/results_path/data]
+      image: localhost:5001/step-model-config:latest
+      resources:
+        limits: {nvidia.com/gpu: 1}
+    inputs:
+      artifacts:
+      - {name: model-training-model_path, path: /tmp/inputs/model_path/data}
+      - {name: test-dataset-generation-csv_path, path: /tmp/inputs/test_csv_path/data}
+    outputs:
+      artifacts:
+      - {name: model-testing-results_path, path: /tmp/outputs/results_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Effettua
+          il testing del modello", "implementation": {"container": {"command": ["python3.9",
+          "entrypoint.py", "-test_csv_path", {"inputPath": "test_csv_path"}, "-model_path",
+          {"inputPath": "model_path"}, "-results_path", {"outputPath": "results_path"}],
+          "image": "localhost:5001/step-model-config:latest"}}, "inputs": [{"description":
+          "Test CSV path.", "name": "test_csv_path", "type": "String"}, {"description":
+          "H5 Model path.", "name": "model_path", "type": "String"}], "name": "Model
+          Testing", "outputs": [{"description": "CSV results path.", "name": "results_path",
+          "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "495f10e7536fdffcb6793f08d543fcf9e154504af5298b6ffa786282f696ce34", "url":
+          "kube-pipe/components/step-model-test-config/component.yaml"}'}
+  - name: model-training
+    container:
+      args: []
+      command: [python3.9, entrypoint.py, -train_csv_path, /tmp/inputs/train_csv_path/data,
+        -val_csv_path, /tmp/inputs/val_csv_path/data, -model_path, /tmp/outputs/model_path/data]
+      image: localhost:5001/step-model-config:latest
+      resources:
+        limits: {nvidia.com/gpu: 1}
+    inputs:
+      artifacts:
+      - {name: train-dataset-generation-csv_path, path: /tmp/inputs/train_csv_path/data}
+      - {name: validation-dataset-generation-csv_path, path: /tmp/inputs/val_csv_path/data}
+    outputs:
+      artifacts:
+      - {name: model-training-model_path, path: /tmp/outputs/model_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Effettua
+          l''addestramento del modello", "implementation": {"container": {"command":
+          ["python3.9", "entrypoint.py", "-train_csv_path", {"inputPath": "train_csv_path"},
+          "-val_csv_path", {"inputPath": "val_csv_path"}, "-model_path", {"outputPath":
+          "model_path"}], "image": "localhost:5001/step-model-config:latest"}}, "inputs":
+          [{"description": "Training CSV path.", "name": "train_csv_path", "type":
+          "String"}, {"description": "Validation CSV path.", "name": "val_csv_path",
+          "type": "String"}], "name": "Model Training", "outputs": [{"description":
+          "H5 Model path.", "name": "model_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "b368f07ebe26467254a4cfe90ae6b2c65daf4be1fe3fd5eb1ce03285d225f4ef", "url":
+          "kube-pipe/components/step-model-train-config/component.yaml"}'}
+  - name: test-dataset-generation
+    container:
+      args: []
+      command: [python, entrypoint.py, -type, test, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: test-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di testing", "implementation": {"container": {"command": ["python",
+          "entrypoint.py", "-type", "test", "-csv_path", {"outputPath": "csv_path"}],
+          "image": "localhost:5001/step-dataset-generation-config:latest"}}, "name":
+          "Test Dataset Generation", "outputs": [{"description": "Test CSV path.",
+          "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "22ef68e7611ffb4950b5c02ed26d1f52baecfc312cdd158b313d2084ea8d9682", "url":
+          "kube-pipe/components/step-dataset-test-config/component.yaml"}'}
+  - name: train-dataset-generation
+    container:
+      args: []
+      command: [python, entrypoint.py, -type, train, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: train-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di training", "implementation": {"container": {"command": ["python",
+          "entrypoint.py", "-type", "train", "-csv_path", {"outputPath": "csv_path"}],
+          "image": "localhost:5001/step-dataset-generation-config:latest"}}, "name":
+          "Train Dataset Generation", "outputs": [{"description": "Train CSV path.",
+          "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "dd0e5784a3719b9ebbb9029f782f9a761c21ebeba7e53451c22f71a7765fff31", "url":
+          "kube-pipe/components/step-dataset-train-config/component.yaml"}'}
+  - name: validation-dataset-generation
+    container:
+      args: []
+      command: [python, entrypoint.py, -type, val, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: validation-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di validazione", "implementation": {"container": {"command":
+          ["python", "entrypoint.py", "-type", "val", "-csv_path", {"outputPath":
+          "csv_path"}], "image": "localhost:5001/step-dataset-generation-config:latest"}},
+          "name": "Validation Dataset Generation", "outputs": [{"description": "Validation
+          CSV path.", "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "9b891e68ce92924adfcc43da099233d20de1d40f9a690b4629d1e29ae7f64c71", "url":
+          "kube-pipe/components/step-dataset-val-config/component.yaml"}'}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner

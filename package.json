@@ -12,8 +12,8 @@
     	"push-model-image": "docker push localhost:5001/step-model-config:latest",
     	"migrate-model-image": "npm run build-model-image && npm run tag-model-image && npm run push-model-image",
 
-		"calibrate": "kubectl apply -f kubeflow-pipeline/kind/memory-pods.yaml --namespace=kubeflow",
+		"calibrate": "kubectl apply -f kube-pipe/kind/memory-pods.yaml --namespace=kubeflow",
 		"forward": "kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80",
-      	"exec": "conda activate kf && python kubeflow-pipeline/kmer-pipeline.py"
+      	"exec": "conda activate kf && python kube-pipe/kmer-pipeline.py"
   	}
 }
