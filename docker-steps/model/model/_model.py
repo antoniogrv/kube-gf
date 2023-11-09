@@ -211,20 +211,8 @@ class MyModel(nn.Module, metaclass=ABCMeta):
                 if trigger_times >= patience:
                     break
 
-                # save model each 5 epochs
-                if (epoch_i + 1) % N_EPOCHS_FOR_CHECKPOINT == 0 and epoch_i != 0:
-                    torch.save(self if best_model is None else best_model,
-                               os.path.join(self.__model_dir, f'{self.__model_name}_{epoch_i}.h5'))
-
         # save final model
-        torch.save(self if best_model is None else best_model, os.path.join(
-            self.__model_dir,
-            f'{self.__model_name}.h5'
-        ))
-
-        # delete checkpoints
-        for model_checkpoint in glob(os.path.join(self.__model_dir, f'{self.__model_name}_*.h5')):
-            os.remove(model_checkpoint)
+        torch.save(self if best_model is None else best_model, self.__model_dir)
 
         if logger is not None:
             logger.info("\nTraining complete!")

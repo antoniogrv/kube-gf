@@ -52,6 +52,8 @@ def entrypoint(
         grid_search: bool,
 ) -> Tuple[str, MyModelConfig]:
     
+    print('Model Path:', model_path)
+
     # get value from .env
     root_dir: Final = 'data'
 
@@ -111,7 +113,9 @@ def entrypoint(
         print('Model not present. Proceeding with training.')
 
         model_save_dir = os.path.dirname(model_path)
-        if not os.path.isdir(model_save_dir): os.makedirs(model_save_dir)
+        
+        if not os.path.isdir(model_save_dir): 
+            os.makedirs(model_save_dir)
 
         # init loggers
         logger: logging.Logger = setup_logger(
@@ -197,7 +201,7 @@ def entrypoint(
 
         # define model
         model: GeneClassifier = GCDNABert(
-            model_dir=model_dir,
+            model_dir=model_path,
             model_name=model_name,
             config=model_config,
             n_classes=train_dataset.classes(),
@@ -231,6 +235,7 @@ def entrypoint(
 
         # close loggers
         close_loggers([train_logger, logger])
+
         del train_logger
         del logger
 

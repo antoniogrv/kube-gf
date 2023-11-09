@@ -26,7 +26,7 @@ def define_general_parameters(
     arg_parser.add_argument('-val_csv_path', dest='val_csv_path', action='store',
                             type=str, default="", help='val csv path')
     arg_parser.add_argument('-model_path', dest='model_path', action='store',
-                            type=str, default="", help='test csv path')
+                            type=str, default="", help='h5 model path')
     arg_parser.add_argument('-results_path', dest='results_path', action='store',
                             type=str, default="", help='results csv path')
     arg_parser.add_argument('-len_read', dest='len_read', action='store',

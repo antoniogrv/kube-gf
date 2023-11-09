@@ -55,14 +55,3 @@ data:
     host: "localhost:${reg_port}"
     help: "https://kind.sigs.k8s.io/docs/user/local-registry/"
 EOF
-
-kubectl cluster-info --context kind-kind
-
-kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=2.0.2"
-kubectl wait --for condition=established --timeout=60s crd/applications.app.k8s.io
-kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-pns?ref=2.0.2"
-
-docker exec -ti kind-control-plane ln -s /sbin/ldconfig /sbin/ldconfig.real || true
-
-helm repo add nvidia https://helm.ngc.nvidia.com/nvidia || true
-helm repo update
