@@ -235,7 +235,7 @@ def entrypoint(
         model: Optional[MyModel] = None
         if model_selected == 'fc':
             model: MyModel = FCFullyConnected(
-                model_dir=model_dir,
+                model_dir=model_path,
                 model_name=model_name,
                 config=model_config,
                 n_classes=train_dataset.classes(),
@@ -243,7 +243,7 @@ def entrypoint(
             )
         elif model_selected == 'rnn':
             model: MyModel = FCRecurrentNN(
-                model_dir=model_dir,
+                model_dir=model_path,
                 model_name=model_name,
                 config=model_config,
                 n_classes=train_dataset.classes(),
@@ -269,7 +269,7 @@ def entrypoint(
             train_loader=train_loader,
             optimizer=optimizer,
             device=device,
-            epochs=2,
+            epochs=1,
             evaluation=True,
             val_loader=val_loader,
             logger=train_logger
