@@ -6,18 +6,20 @@
     <p><b>Index Keys:</b> <a href="https://ml-ops.org/">MLOps</a>, <a href="https://www.docker.com/">Docker</a>, <a href="https://kubernetes.io/it/">Kubernetes</a>, <a href="https://www.kubeflow.org/">Kubeflow</a>
 </div>
 
-- [Introduzione](https://github.com/antoniogrv/kube-gf#introduzione)
-- [Installazione del sistema](https://github.com/antoniogrv/kube-gf#installazione-del-sistema)
-- [Eseguire la pipeline](https://github.com/antoniogrv/kube-gf#eseguire-la-pipeline)
-    - [Caricare le immagini Docker](https://github.com/antoniogrv/kube-gf#caricare-le-immagini-docker)
-        - [Dataset Generation Docker Image](https://github.com/antoniogrv/kube-gf#dataset-generation-docker-image)
-        - [Model Training & Testing Docker Image](https://github.com/antoniogrv/kube-gf#model-training--testing-docker-image)
-    - [Compilare la pipeline con Miniconda](https://github.com/antoniogrv/kube-gf#compilare-la-pipeline-con-miniconda)
-    - [Caricare la pipeline su Kubeflow](https://github.com/antoniogrv/kube-gf#caricare-la-pipeline-su-kubeflow)
-- [Sviluppo della pipeline](https://github.com/antoniogrv/kube-gf#sviluppo-della-pipeline)
-  - [Interagire col Docker Registry on-prem](https://github.com/antoniogrv/kube-gf#interagire-col-docker-registry-on-prem)
-  - [Creazione dei componenti](https://github.com/antoniogrv/kube-gf#creazione-dei-componenti)
-- [Considerazioni di MLSecOps](https://github.com/antoniogrv/kube-gf#considerazioni-di-mlsecops)
+- [Introduzione](#introduzione)
+- [Installazione del sistema](#installazione-del-sistema)
+  - [Dipendenze](#dipendenze)
+  - [Provisioning](#provisioning)
+- [Eseguire la pipeline](#eseguire-la-pipeline)
+    - [Caricare le immagini Docker](#caricare-le-immagini-docker)
+        - [Dataset Generation Docker Image](#dataset-generation-docker-image)
+        - [Model Training & Testing Docker Image](h#model-training--testing-docker-image)
+    - [Compilare la pipeline con Miniconda](#compilare-la-pipeline-con-miniconda)
+    - [Caricare la pipeline su Kubeflow](#caricare-la-pipeline-su-kubeflow)
+- [Sviluppo della pipeline](#sviluppo-della-pipeline)
+  - [Interagire col Docker Registry](#interagire-col-docker-registry)
+  - [Creazione dei componenti](#creazione-dei-componenti)
+- [Considerazioni di MLSecOps](#considerazioni-di-mlsecops)
 
 <hr>
 
@@ -30,6 +32,8 @@ Il sistema prevede un'infrastruttura [Kubernetes](https://kubernetes.io/) su cui
 ## Installazione del sistema
 
 Il bootstrap del progetto prevede la creazione di un cluster Kubernetes, l'applicazione dei manifesti Kubeflow e attività di validazione della correttezza dell'installazione. Per maggiori informazioni sull'architettura del sistema, referenziare la sezione apposita.
+
+### Dipendenze
 
 > **Questo progetto non è compatibile con ambienti Windows.** E' strettamente necessario utilizzare un ambiente Linux. Qualsiasi tentativo di far combaciare le dipendenze richieste su [WSL](https://learn.microsoft.com/it-it/windows/wsl/) non produrrà i risultati auspicati. Inoltre, si sconsiglia di utilizzare macchine virtuali che non supportino la virtualizzazione hardware della GPU (e.g. [VirtualBox](https://www.virtualbox.org/)) poiché potrebbe generare conflitti con l'installazione del sistema. Si consiglia, pertanto, di utilizzare un'installazione nativa di Linux.
 
@@ -47,6 +51,8 @@ Inoltre, per garantire il supporto della GPU sono necessarie le seguenti dipende
 > Su Ubuntu, non è necessario installare i driver NVIDIA, poiché pre-installati autonomamente dalla distribuzione. Tuttavia, è necessario installare il container toolkit.
 
 Infine, per quanto non sia strettamente necessario, si consiglia l'installazione di [Miniconda](https://conda.io/miniconda.html) per la gestione degli ambienti Python.
+
+### Provisioning
 
 1. Clonare la repository [kube-gf](https://github.com/antoniogrv/kube-gf) e accertarsi che il Docker Daemon sia in esecuzione.
 
@@ -121,6 +127,8 @@ kubectl port-forward -n kubeflow svc/ml-pipeline-ui 8080:80
 
 ## Eseguire la pipeline
 
+> Di seguito vengono proposti gli step per eseguire la pipeline del modello *Gene Classifier*; similmente, è possibile eseguire la pipeline del modello *Fusion Classifier* in modo del tutto analogo.
+
 Una volta creata l'infrastruttura Kubernetes, è possibile eseguire la pipeline esemplificativa presente in questa repository. Per farlo, è necessario caricare sul [Docker Registry](https://docs.docker.com/registry/) on-prem del cluster le immagini Docker (*docker-steps*) dei componenti della pipeline. Successivamente, si presentano due opzioni:
 
 - Compilare manualmente la pipeline
@@ -133,6 +141,8 @@ I microservizi della pipeline giacciono in un registro Docker self-hosted all'in
 > Si noti che *non* è necessario installare Python, PyTorch, CUDA o altre dipendenze non espressamente indicate su questo README. Le immagini Docker sono state realizzate in modo tale da includere tutte le dipendenze necessarie per l'esecuzione dei componenti.
 
 [I pod della pipeline Kubeflow effettuano il pull dal registro Docker](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/); analogamente, i componenti Kubeflow referenziano *esattamente* i tag delle immagini così come sono state caricate nel registro, motivo per cui è necessario creare le immagini, taggarle opportunamente e caricarle nel registro.
+
+Sia il modello Gene Classifier che il modello Fusion Classifier condividono le due immagini Docker proposte, forti di un'opportuna parametrizzazione.
 
 #### Dataset Generation Docker Image
 
@@ -176,15 +186,15 @@ python kube-pipe/kmer-pipeline.py
 
 ![Pipeline](artifacts/pictures/pipeline_completed.png)
 
-- Se si decide di usare la pipeline compilata manualmente, il manifesto sarà disponibile localmente a `kube-pipe/relics/pipeline.yaml`.
-- Se si decide di usare la pipeline pre-compilata, sarà disponibile localmente a `artifacts/pipelines/pipeline.yaml`.
+- Se si decide di usare la pipeline compilata manualmente, il manifesto sarà disponibile localmente a `kube-pipe/relics/gene_classifier_pipeline.yaml`.
+- Se si decide di usare la pipeline pre-compilata, sarà disponibile localmente a `artifacts/pipelines/gene_classifier_pipeline.yaml`.
 
-A prescindere da come si preleva il file `pipeline.yaml`, quest'ultimo dev'essere caricato su Kubeflow per poter generare esperimenti ed esecuzioni.
+A prescindere da come si preleva il file `gene_classifier_pipeline.yaml`, quest'ultimo dev'essere caricato su Kubeflow per poter generare esperimenti ed esecuzioni.
 
 1. Dirigersi sulla dashboard Kubeflow all'indirizzo `http://localhost:8080`.
-2. In *Pipelines*, cliccare su *Upload pipeline* e selezionare il file locale `pipeline.yaml`.
+2. In *Pipelines*, cliccare su *Upload pipeline* e selezionare il file locale `gene_classifier_pipeline.yaml`.
 
-> Nota: in alternativa, invece di caricare il file locale `pipeline.yaml`, è possibile caricare il manifesto come URL remoto tramite `https://raw.githubusercontent.com/antoniogrv/kube-gf/master/artifacts/pipelines/pipeline.yaml`.
+> Nota: in alternativa, invece di caricare il file locale `gene_classifier_pipeline.yaml`, è possibile caricare il manifesto come URL remoto tramite `https://raw.githubusercontent.com/antoniogrv/kube-gf/master/artifacts/pipelines/gene_classifier_pipeline.yaml`.
 
 3. Dovrebbe comparire un prospetto della macchina a stati. A questo punto, cliccare *Create run* per eseguire la pipeline.
 
@@ -192,7 +202,7 @@ A prescindere da come si preleva il file `pipeline.yaml`, quest'ultimo dev'esser
 
 *Il contenuto di questa sezione è temporaneo.*
 
-### Interagire col Docker Registry on-prem
+### Interagire col Docker Registry
 
 Il sistema, così come installato, genera un container Docker con un Registry locale che può essere usato per caricare le immagini dei componenti della pipeline. Per caricare un'immagine nel registry, è necessario prima taggarla con il nome del registry stesso, che è `localhost:5001`. Per esempio, se si volesse caricare l'immagine `kmer-component:latest`, è necessario eseguire `docker tag kmer-component:latest localhost:5001/kmer-component:latest`. Una volta fatto, è possibile caricare l'immagine nel registry tramite `docker push localhost:5001/kmer-component:latest`.
 
