@@ -1,9 +1,7 @@
 <div align="center">
-<img align="center" src="https://camo.githubusercontent.com/bc0c839f32126d45c21472c3ea883223fdaa2efc7d3f82da51fd7907efcbd5bd/68747470733a2f2f7777772e6b756265666c6f772e6f72672f696d616765732f6c6f676f2e737667" alt="logo" width="100">
-    &nbsp;&nbsp;&nbsp;&nbsp;
 <img align="center" src="https://kubernetes.io/images/nav_logo2.svg" alt="logo" width="300">
     <h3>GeneFusion over Kubernetes</h3>
-    <p><b>Index Keys:</b> <a href="https://ml-ops.org/">MLOps</a>, <a href="https://www.docker.com/">Docker</a>, <a href="https://kubernetes.io/it/">Kubernetes</a>, <a href="https://www.kubeflow.org/">Kubeflow</a>
+    <p><b>Index Keys:</b> <a href="https://ml-ops.org/">MLOps</a>, <a href="https://mlsecops.com/">MLSecOps</a>, <a href="https://kubernetes.io/it/">Kubernetes</a>, <a href="https://www.kubeflow.org/">Kubeflow</a>
 </div>
 
 - [Introduzione](#introduzione)
@@ -103,7 +101,7 @@ helm install --wait --generate-name \
 ```
 kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/cluster-scoped-resources?ref=2.0.2"
 kubectl wait --for condition=established --timeout=60s crd/applications.app.k8s.io
-kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-pns?ref=2.0.2"
+kubectl apply -k "github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic-emissary?ref=2.0.2"
 ```
 
 7. Poiché l'implementazione del NVIDIA Operator è talvolta imprevedibile, bisogna controverificare che stia operando come previsto. Assicurarsi che il NVIDIA GPU Operator sia effettivamente in esecuzione. Per farlo, consultare lo stato dei [pod](https://kubernetes.io/docs/concepts/workloads/pods/) nel [Kubernetes Namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) `gpu-operator`.
@@ -183,8 +181,6 @@ python kube-pipe/kmer-pipeline.py
 ```
 
 ### Caricare la pipeline su Kubeflow
-
-![Pipeline](artifacts/pictures/pipeline_completed.png)
 
 - Se si decide di usare la pipeline compilata manualmente, il manifesto sarà disponibile localmente a `kube-pipe/relics/gene_classifier_pipeline.yaml`.
 - Se si decide di usare la pipeline pre-compilata, sarà disponibile localmente a `artifacts/pipelines/gene_classifier_pipeline.yaml`.

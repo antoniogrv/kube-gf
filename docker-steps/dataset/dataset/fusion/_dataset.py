@@ -300,6 +300,9 @@ class FusionDataset(MyDataset):
 
     def get_dataset_status(self):
         return self.__status
+    
+    def get_dataset(self):
+        return self.__dataset
 
     def print_dataset_status(self) -> str:
         table: List[List[Union[Hashable, Series]]] = [[label, record] for label, record in self.__status.items()]

@@ -36,6 +36,7 @@ from utils import close_loggers
 
 
 def entrypoint(
+        gc_model_path: str,
         test_csv_path: str,
         train_csv_path: str,
         val_csv_path: str,
