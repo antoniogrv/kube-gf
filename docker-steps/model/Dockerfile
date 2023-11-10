@@ -1,3 +1,6 @@
+# Produce un'immagine Docker parametrica che effettua il training e il testing del modello.
+# Per maggiori dettagli sui singoli stage, si rimanda alla documentazione ufficiale del progetto.
+
 FROM nvidia/cuda:12.2.2-base-ubuntu22.04 as cuda
 
 ENV DEBIAN_FRONTEND=noninteractive

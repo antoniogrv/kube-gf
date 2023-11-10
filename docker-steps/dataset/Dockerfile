@@ -1,9 +1,4 @@
 # Produce un'immagine Docker parametrica che genera i dataset da dare in pasto al modello.
-# Rispettivamente, è possibile generare i dataset "train", "test" e "val" mediante gli NPM scripts nel package.json.
-
-# Questo Dockerfile prevede un argomento "dataset_type_arg" che può assumere i valori sopraindicati; inoltre ..
-# .. adotta la strategia delle multi-stage builds per snellire l'immagine finale.
-
 # Per maggiori dettagli sui singoli stage, si rimanda alla documentazione ufficiale del progetto.
 
 FROM python:3.8-slim-buster as pip_dependencies
