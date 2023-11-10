@@ -192,7 +192,7 @@ A prescindere da come si preleva il file `gene_classifier_pipeline.yaml`, quest'
 1. Dirigersi sulla dashboard Kubeflow all'indirizzo `http://localhost:8080`.
 2. In *Pipelines*, cliccare su *Upload pipeline* e selezionare il file locale `gene_classifier_pipeline.yaml`.
 
-> Nota: in alternativa, invece di caricare il file locale `gene_classifier_pipeline.yaml`, è possibile caricare il manifesto come URL remoto tramite `https://raw.githubusercontent.com/antoniogrv/kube-gf/master/artifacts/pipelines/gene_classifier_pipeline.yaml`.
+> Nota: in alternativa, invece di caricare il file locale `gene_classifier_pipeline.yaml`, è possibile caricare il manifesto come URL remoto tramite `https://github.com/antoniogrv/kube-gf/releases/download/draft/gene_classifier_pipeline.yaml`. E' possibile trovare altri manifesti pre-compilati nella sezione [Releases](https://github.com/antoniogrv/kube-gf/releases).
 
 3. Dovrebbe comparire un prospetto della macchina a stati. A questo punto, cliccare *Create run* per eseguire la pipeline.
 
