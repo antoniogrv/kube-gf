@@ -7,7 +7,7 @@ from kfp.v2 import dsl
 '''
 Delinea i componenti della pipeline Kubeflow.
 '''
-@dsl.pipeline(name="gene_classifier") 
+@dsl.pipeline(name="Gene Classifier") 
 def gene_classifier():
     gc_dataset_train_config = gc_dataset_train_config_op()
     gc_dataset_test_config = gc_dataset_test_config_op()
@@ -24,7 +24,7 @@ def gene_classifier():
     ).set_gpu_limit(1)
 
 '''
-Genera un path assoluto per il componente specificato, in modo da poter eseguire (npm run exec) lo script dalla root del progetto.
+Genera un path qualificato per il componente specificato.
 '''
 def component_path(dir: str) -> str:
     return os.path.join(os.path.dirname(__file__), f"components/{dir}/component.yaml")

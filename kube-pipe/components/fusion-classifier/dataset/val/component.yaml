@@ -1,5 +1,5 @@
-name: Validation Dataset Generation
-description: Genera il dataset di validazione
+name: Fusion Classifier Validation Dataset Generation
+description: Genera il dataset di validazione del modello FC
 
 outputs:
 - {name: csv_path, type: String, description: 'Validation CSV path.'}

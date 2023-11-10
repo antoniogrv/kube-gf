@@ -1,5 +1,5 @@
-name: Train Dataset Generation
-description: Genera il dataset di training
+name: Fusion Classifier Train Dataset Generation
+description: Genera il dataset di training del modello FC
 
 outputs:
 - {name: csv_path, type: String, description: 'Train CSV path.'}

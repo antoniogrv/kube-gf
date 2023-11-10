@@ -1,5 +1,5 @@
-name: Model Training
-description: Effettua l'addestramento del modello
+name: Gene Classifier Model Training
+description: Effettua l'addestramento del modello GC
 
 inputs:
 - {name: train_csv_path, type: String, description: 'Training CSV path.'}

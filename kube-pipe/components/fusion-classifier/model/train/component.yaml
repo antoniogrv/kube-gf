@@ -1,9 +1,10 @@
-name: Model Training
-description: Effettua l'addestramento del modello
+name: Fusion Classifier Model Training
+description: Effettua l'addestramento del modello FC
 
 inputs:
 - {name: train_csv_path, type: String, description: 'Training CSV path.'}
 - {name: val_csv_path, type: String, description: 'Validation CSV path.'}
+- {name: gc_model_path, type: String, description: 'Absolute path of the Gene Classifier H5 model.'}
 
 outputs:
 - {name: model_path, type: String, description: 'H5 Model path.'}
@@ -14,6 +15,8 @@ implementation:
     command: [
       python3.9,
       'fc_handler.py',
+      -gc_model_path, 
+      {inputPath: gc_model_path},
       -train_csv_path, 
       {inputPath: train_csv_path},
       -val_csv_path, 

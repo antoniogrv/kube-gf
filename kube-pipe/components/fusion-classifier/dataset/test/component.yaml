@@ -1,5 +1,5 @@
-name: Test Dataset Generation
-description: Genera il dataset di testing
+name: Fusion Classifier Test Dataset Generation
+description: Genera il dataset di testing del modello FC
 
 outputs:
 - {name: csv_path, type: String, description: 'Test CSV path.'}

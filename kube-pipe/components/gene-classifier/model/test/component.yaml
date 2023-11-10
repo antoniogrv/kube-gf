@@ -1,5 +1,5 @@
-name: Model Testing
-description: Effettua il testing del modello
+name: Gene Classifier Model Testing
+description: Effettua il testing del modello GC
 
 inputs:
 - {name: test_csv_path, type: String, description: 'Test CSV path.'}
