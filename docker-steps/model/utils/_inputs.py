@@ -19,6 +19,8 @@ def str2bool(v):
 def define_general_parameters(
         arg_parser: argparse.ArgumentParser,
 ) -> None:
+    arg_parser.add_argument('-gc_model_path', dest='gc_model_path', action='store',
+                            type=str, default="", help='gc model path')
     arg_parser.add_argument('-test_csv_path', dest='test_csv_path', action='store',
                             type=str, default="", help='test csv path')
     arg_parser.add_argument('-train_csv_path', dest='train_csv_path', action='store',

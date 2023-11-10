@@ -56,10 +56,6 @@ class FusionDataset(MyDataset):
             self.__genes_list: List[str] = gene_panel_file.read().split('\n')
         self.update_file(self.__gene_panel_path)
 
-        __train_dataset_path: str = train_csv_path
-        __val_dataset_path: str = val_csv_path
-        __test_dataset_path: str = test_csv_path
-
         if dataset_type == 'test': self.__dataset_path = test_csv_path
         if dataset_type == 'train': self.__dataset_path = train_csv_path
         if dataset_type == 'val': self.__dataset_path = val_csv_path
@@ -121,11 +117,12 @@ class FusionDataset(MyDataset):
                     for local_inputs in results:
                         self.__inputs += local_inputs
             with open(self.__inputs_path, 'wb') as handle:
-                print('Picke-loading data...')
+                print('Picke-dumping data...')
                 pickle.dump(self.__inputs, handle, protocol=pickle.HIGHEST_PROTOCOL)
             self.update_file(self.__inputs_path)
         # load inputs
         else:
+            print('Picke-loading data...')
             with open(self.__inputs_path, 'rb') as handle:
                 self.__inputs: [Dict[str, Union[List[Dict[str, torch.Tensor]], torch.Tensor]]] = pickle.load(handle)
 

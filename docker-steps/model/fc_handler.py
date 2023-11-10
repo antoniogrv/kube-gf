@@ -12,13 +12,26 @@ import os
 from tokenizer import MyDNATokenizer
 from tokenizer import DNABertTokenizer
 
+from model import MyModelConfig
+from model import MyModel
+
+from dataset import FusionDatasetConfig
+from dataset import FusionDataset
+
 from dataset import TranscriptDatasetConfig
 from dataset import TranscriptDataset
+
+from model import FCFullyConnectedModelConfig
+from model import FCFullyConnected
+from model import FCRecurrentNNConfig
+from model import FCRecurrentNN
+
 from torch.utils.data import DataLoader
 
 from model import MyModelConfig
 from model import GeneClassifier
 from model import evaluate_weights
+from utils import define_fusion_classifier_inputs
 
 from model import GCDNABertModelConfig
 from model import GCDNABert
@@ -36,6 +49,7 @@ from utils import close_loggers
 
 
 def entrypoint(
+        gc_model_path: str,
         test_csv_path: str,
         train_csv_path: str,
         val_csv_path: str,
@@ -45,13 +59,18 @@ def entrypoint(
         len_kmer: int,
         n_words: int,
         tokenizer_selected: str,
+        n_fusion: int,
+        gc_model_selected: str,
+        gc_hyperparameters: Dict[str, any],
+        gc_batch_size: int,
+        gc_re_train: bool,
         model_selected: str,
-        hyper_parameters: Dict[str, any],
+        fc_hyper_parameters: Dict[str, any],
         batch_size: int,
+        freeze: bool,
         re_train: bool,
         grid_search: bool,
 ) -> Tuple[str, MyModelConfig]:
-    
     print('Model Path:', model_path)
 
     # get value from .env
@@ -73,24 +92,36 @@ def entrypoint(
         )
 
     # init configuration
+    n_kmers: int = (len_read - len_kmer) + 1
+    n_sentences: int = (n_kmers - n_words) + 1
     model_config: Optional[MyModelConfig] = None
-    if model_selected == 'dna_bert':
-        model_config = GCDNABertModelConfig(
-            vocab_size=tokenizer.vocab_size,
-            **hyper_parameters
+    if model_selected == 'fc':
+        model_config = FCFullyConnectedModelConfig(
+            gene_classifier_name=gc_model_selected,
+            gene_classifier_path=gc_model_path,
+            n_sentences=n_sentences,
+            freeze=freeze,
+            **fc_hyper_parameters
+        )
+    elif model_selected == 'rnn':
+        model_config = FCRecurrentNNConfig(
+            gene_classifier_name=gc_model_selected,
+            gene_classifier_path=gc_model_path,
+            n_sentences=n_sentences,
+            freeze=freeze,
+            **fc_hyper_parameters
         )
 
     # generate test id
     test_id: str = "tmp"
 
-    # create dataset configuration
-    dataset_conf: TranscriptDatasetConfig = TranscriptDatasetConfig(
+    dataset_conf: FusionDatasetConfig = FusionDatasetConfig(
         genes_panel_path='data/genes_panel.txt',
-        transcript_dir='data/transcripts',
         len_read=len_read,
         len_kmer=len_kmer,
         n_words=n_words,
-        tokenizer=tokenizer
+        tokenizer=tokenizer,
+        n_fusion=n_fusion,
     )
 
     # get global variables
@@ -129,7 +160,7 @@ def entrypoint(
 
         # load train and validation dataset
         print('Preparing Train Dataset for consumption...')
-        train_dataset = TranscriptDataset(
+        train_dataset = FusionDataset(
             root_dir=root_dir,
             conf=dataset_conf,
             dataset_type='train',
@@ -137,8 +168,9 @@ def entrypoint(
             test_csv_path="",
             val_csv_path=val_csv_path,
         )
+
         print('Preparing Validation Dataset for consumption...')
-        val_dataset = TranscriptDataset(
+        val_dataset = FusionDataset(
             root_dir=root_dir,
             conf=dataset_conf,
             dataset_type='val',
@@ -200,13 +232,23 @@ def entrypoint(
         ).to(device)
 
         # define model
-        model: GeneClassifier = GCDNABert(
-            model_dir=model_path,
-            model_name=model_name,
-            config=model_config,
-            n_classes=train_dataset.classes(),
-            weights=class_weights
-        )
+        model: Optional[MyModel] = None
+        if model_selected == 'fc':
+            model: MyModel = FCFullyConnected(
+                model_dir=model_dir,
+                model_name=model_name,
+                config=model_config,
+                n_classes=train_dataset.classes(),
+                weights=class_weights
+            )
+        elif model_selected == 'rnn':
+            model: MyModel = FCRecurrentNN(
+                model_dir=model_dir,
+                model_name=model_name,
+                config=model_config,
+                n_classes=train_dataset.classes(),
+                weights=class_weights
+            )
 
         # log model hyper parameters
         logger.info('Model hyper parameters')
@@ -227,7 +269,7 @@ def entrypoint(
             train_loader=train_loader,
             optimizer=optimizer,
             device=device,
-            epochs=1,
+            epochs=2,
             evaluation=True,
             val_loader=val_loader,
             logger=train_logger
@@ -257,7 +299,7 @@ def entrypoint(
         )
 
         print('Preparing test dataset for consumption...')
-        test_dataset = TranscriptDataset(
+        test_dataset = FusionDataset(
             root_dir=root_dir,
             conf=dataset_conf,
             dataset_type='test',
@@ -326,10 +368,11 @@ def entrypoint(
 
 if __name__ == '__main__':
     # define inputs for this script
-    __args, __hyper_parameters = define_gene_classifier_inputs()
+    __args, __gc_hyperparameters, __hyperparameters = define_fusion_classifier_inputs()
 
     # execute train_gene_classifier method
     entrypoint(
         **__args,
-        hyper_parameters=__hyper_parameters
+        gc_hyperparameters=__gc_hyperparameters,
+        fc_hyper_parameters=__hyperparameters
     )
