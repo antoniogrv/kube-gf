@@ -35,8 +35,8 @@ Compila la pipeline, producendo un file .yaml che può essere eseguito da Kubefl
 if __name__ == '__main__':
     # Componenti Docker della pipeline Kubeflow
     gc_dataset_train_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/train"))
-    gc_dataset_test_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/train"))
-    gc_dataset_val_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/train"))
+    gc_dataset_test_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/test"))
+    gc_dataset_val_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/val"))
 
     gc_model_train_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/model/train"))
     gc_model_test_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/model/test"))

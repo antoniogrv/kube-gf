@@ -9,7 +9,7 @@ implementation:
     image: localhost:5001/step-dataset-generation-config:latest
     command: [
       python,
-      'handler.py',
+      'gc_handler.py',
       -operation,
       gene,
       -type,
