@@ -33,20 +33,22 @@ Il bootstrap del progetto prevede la creazione di un cluster Kubernetes, l'appli
 
 ### Dipendenze
 
-> **Questo progetto non è compatibile con ambienti Windows.** E' strettamente necessario utilizzare un ambiente Linux. Qualsiasi tentativo di far combaciare le dipendenze richieste su [WSL](https://learn.microsoft.com/it-it/windows/wsl/) non produrrà i risultati auspicati. Inoltre, si sconsiglia di utilizzare macchine virtuali che non supportino la virtualizzazione hardware della GPU (e.g. [VirtualBox](https://www.virtualbox.org/)) poiché potrebbe generare conflitti con l'installazione del sistema. Si consiglia, pertanto, di utilizzare un'installazione nativa di Linux.
+> **Questo progetto non è compatibile con ambienti Windows.** E' strettamente necessario utilizzare un ambiente Linux. Qualsiasi tentativo di far combaciare le dipendenze richieste su [WSL](https://learn.microsoft.com/it-it/windows/wsl/) potrebbe non produrrà i risultati auspicati. Inoltre, si sconsiglia di utilizzare macchine virtuali che non supportino la virtualizzazione hardware della GPU (e.g. [VirtualBox](https://www.virtualbox.org/)) poiché potrebbero generare conflitti con l'installazione del sistema. Si consiglia, pertanto, di utilizzare un'installazione nativa di Linux, per quanto sia teoricamente possibile [abilitare l'accelerazione della GPU in distribuzioni WSL](https://ubuntu.com/tutorials/enabling-gpu-acceleration-on-ubuntu-on-wsl2-with-the-nvidia-cuda-platform#1-overview).
 
 Prima di procedere, assicurarsi di aver installato correttamente le seguenti tecnologie:
-- [Docker](https://docs.docker.com/engine/install/)
-- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
-- [Helm](https://helm.sh/docs/intro/install/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
-- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Docker](https://docs.docker.com/engine/install/) (v24.0.7)
+- [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) (v0.20.0)
+- [Helm](https://helm.sh/docs/intro/install/) (v3.13.1)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) (Client v1.28.3, Server v1.27.3, Kustomize v5.0.4)
+- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) (v2.34.1)
+
+Le versioni indicate nelle parentesi rappresentano quelle adoperate per lo sviluppo del sistema. A meno di forti deprecazioni, qualsiasi versione successiva dovrebbe garantire un'installazione corretta.
 
 Inoltre, per garantire il supporto della GPU sono necessarie le seguenti dipendenze:
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation)
 - [NVIDIA Drivers](https://www.nvidia.com/en-us/drivers/unix/)
 
-> Su Ubuntu, non è necessario installare i driver NVIDIA, poiché pre-installati autonomamente dalla distribuzione. Tuttavia, è necessario installare il container toolkit.
+> Su Ubuntu, non è necessario installare i driver NVIDIA poiché pre-installati autonomamente dalla distribuzione. Tuttavia, è necessario installare il container toolkit.
 
 Infine, per quanto non sia strettamente necessario, si consiglia l'installazione di [Miniconda](https://conda.io/miniconda.html) per la gestione degli ambienti Python.
 
@@ -165,18 +167,18 @@ docker push localhost:5001/step-model-config:latest
 Seguire le seguenti istruzioni solo se si intende compilare manualmente la pipeline. Se si intende usare la pipeline pre-compilata, saltare direttamente alla sezione successiva.
 
 1. Creare e attivare l'ambiente Miniconda.
-```console
+```
 conda create -n kf python=3.8.18
 conda activate kf
 ```
 
 2. Installare le dipendenze Python necessarie.
-```console
+```
 pip install -r kube-pipe/requirements.txt
 ```
 
 3. Eseguire lo script di compilazione, il quale produrrà un artefatto nella directory `kube-pipe/relics`.
-```console
+```
 python kube-pipe/kmer-pipeline.py
 ```
 
