@@ -1,0 +1,252 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: fusion-classifier-
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22, pipelines.kubeflow.org/pipeline_compilation_time: '2023-11-10T14:52:23.881894',
+    pipelines.kubeflow.org/pipeline_spec: '{"name": "Fusion Classifier"}'}
+  labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.22}
+spec:
+  entrypoint: fusion-classifier
+  templates:
+  - name: fusion-classifier
+    dag:
+      tasks:
+      - name: fusion-classifier-model-testing
+        template: fusion-classifier-model-testing
+        dependencies: [fusion-classifier-model-training, fusion-classifier-test-dataset-generation,
+          gene-classifier-model-training]
+        arguments:
+          artifacts:
+          - {name: fusion-classifier-model-training-model_path, from: '{{tasks.fusion-classifier-model-training.outputs.artifacts.fusion-classifier-model-training-model_path}}'}
+          - {name: fusion-classifier-test-dataset-generation-csv_path, from: '{{tasks.fusion-classifier-test-dataset-generation.outputs.artifacts.fusion-classifier-test-dataset-generation-csv_path}}'}
+          - {name: gene-classifier-model-training-model_path, from: '{{tasks.gene-classifier-model-training.outputs.artifacts.gene-classifier-model-training-model_path}}'}
+      - name: fusion-classifier-model-training
+        template: fusion-classifier-model-training
+        dependencies: [fusion-classifier-train-dataset-generation, fusion-classifier-validation-dataset-generation,
+          gene-classifier-model-training]
+        arguments:
+          artifacts:
+          - {name: fusion-classifier-train-dataset-generation-csv_path, from: '{{tasks.fusion-classifier-train-dataset-generation.outputs.artifacts.fusion-classifier-train-dataset-generation-csv_path}}'}
+          - {name: fusion-classifier-validation-dataset-generation-csv_path, from: '{{tasks.fusion-classifier-validation-dataset-generation.outputs.artifacts.fusion-classifier-validation-dataset-generation-csv_path}}'}
+          - {name: gene-classifier-model-training-model_path, from: '{{tasks.gene-classifier-model-training.outputs.artifacts.gene-classifier-model-training-model_path}}'}
+      - {name: fusion-classifier-test-dataset-generation, template: fusion-classifier-test-dataset-generation}
+      - {name: fusion-classifier-train-dataset-generation, template: fusion-classifier-train-dataset-generation}
+      - {name: fusion-classifier-validation-dataset-generation, template: fusion-classifier-validation-dataset-generation}
+      - name: gene-classifier-model-training
+        template: gene-classifier-model-training
+        dependencies: [gene-classifier-train-dataset-generation, gene-classifier-validation-dataset-generation]
+        arguments:
+          artifacts:
+          - {name: gene-classifier-train-dataset-generation-csv_path, from: '{{tasks.gene-classifier-train-dataset-generation.outputs.artifacts.gene-classifier-train-dataset-generation-csv_path}}'}
+          - {name: gene-classifier-validation-dataset-generation-csv_path, from: '{{tasks.gene-classifier-validation-dataset-generation.outputs.artifacts.gene-classifier-validation-dataset-generation-csv_path}}'}
+      - {name: gene-classifier-train-dataset-generation, template: gene-classifier-train-dataset-generation}
+      - {name: gene-classifier-validation-dataset-generation, template: gene-classifier-validation-dataset-generation}
+  - name: fusion-classifier-model-testing
+    container:
+      args: []
+      command: [python3.9, fc_handler.py, -gc_model_path, /tmp/inputs/gc_model_path/data,
+        -test_csv_path, /tmp/inputs/test_csv_path/data, -model_path, /tmp/inputs/model_path/data,
+        -results_path, /tmp/outputs/results_path/data]
+      image: localhost:5001/step-model-config:latest
+      resources:
+        limits: {nvidia.com/gpu: 1}
+    inputs:
+      artifacts:
+      - {name: gene-classifier-model-training-model_path, path: /tmp/inputs/gc_model_path/data}
+      - {name: fusion-classifier-model-training-model_path, path: /tmp/inputs/model_path/data}
+      - {name: fusion-classifier-test-dataset-generation-csv_path, path: /tmp/inputs/test_csv_path/data}
+    outputs:
+      artifacts:
+      - {name: fusion-classifier-model-testing-results_path, path: /tmp/outputs/results_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Effettua
+          il testing del modello FC", "implementation": {"container": {"command":
+          ["python3.9", "fc_handler.py", "-gc_model_path", {"inputPath": "gc_model_path"},
+          "-test_csv_path", {"inputPath": "test_csv_path"}, "-model_path", {"inputPath":
+          "model_path"}, "-results_path", {"outputPath": "results_path"}], "image":
+          "localhost:5001/step-model-config:latest"}}, "inputs": [{"description":
+          "Test CSV path.", "name": "test_csv_path", "type": "String"}, {"description":
+          "H5 Model path.", "name": "model_path", "type": "String"}, {"description":
+          "Absolute path of the Gene Classifier H5 model.", "name": "gc_model_path",
+          "type": "String"}], "name": "Fusion Classifier Model Testing", "outputs":
+          [{"description": "CSV results path.", "name": "results_path", "type": "String"}]}',
+        pipelines.kubeflow.org/component_ref: '{"digest": "64c2087f572cf2a8b11c2d77721806fd868276676d2f1b91a8a939febcec223d",
+          "url": "kube-pipe/components/fusion-classifier/model/test/component.yaml"}'}
+  - name: fusion-classifier-model-training
+    container:
+      args: []
+      command: [python3.9, fc_handler.py, -gc_model_path, /tmp/inputs/gc_model_path/data,
+        -train_csv_path, /tmp/inputs/train_csv_path/data, -val_csv_path, /tmp/inputs/val_csv_path/data,
+        -model_path, /tmp/outputs/model_path/data]
+      image: localhost:5001/step-model-config:latest
+      resources:
+        limits: {nvidia.com/gpu: 1}
+    inputs:
+      artifacts:
+      - {name: gene-classifier-model-training-model_path, path: /tmp/inputs/gc_model_path/data}
+      - {name: fusion-classifier-train-dataset-generation-csv_path, path: /tmp/inputs/train_csv_path/data}
+      - {name: fusion-classifier-validation-dataset-generation-csv_path, path: /tmp/inputs/val_csv_path/data}
+    outputs:
+      artifacts:
+      - {name: fusion-classifier-model-training-model_path, path: /tmp/outputs/model_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Effettua
+          l''addestramento del modello FC", "implementation": {"container": {"command":
+          ["python3.9", "fc_handler.py", "-gc_model_path", {"inputPath": "gc_model_path"},
+          "-train_csv_path", {"inputPath": "train_csv_path"}, "-val_csv_path", {"inputPath":
+          "val_csv_path"}, "-model_path", {"outputPath": "model_path"}], "image":
+          "localhost:5001/step-model-config:latest"}}, "inputs": [{"description":
+          "Training CSV path.", "name": "train_csv_path", "type": "String"}, {"description":
+          "Validation CSV path.", "name": "val_csv_path", "type": "String"}, {"description":
+          "Absolute path of the Gene Classifier H5 model.", "name": "gc_model_path",
+          "type": "String"}], "name": "Fusion Classifier Model Training", "outputs":
+          [{"description": "H5 Model path.", "name": "model_path", "type": "String"}]}',
+        pipelines.kubeflow.org/component_ref: '{"digest": "d0ceff9588a8731c704ce4cce4b8712039e168518e80395ef2f6a54ba862fffd",
+          "url": "kube-pipe/components/fusion-classifier/model/train/component.yaml"}'}
+  - name: fusion-classifier-test-dataset-generation
+    container:
+      args: []
+      command: [python, fc_handler.py, -type, test, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: fusion-classifier-test-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di testing del modello FC", "implementation": {"container": {"command":
+          ["python", "fc_handler.py", "-type", "test", "-csv_path", {"outputPath":
+          "csv_path"}], "image": "localhost:5001/step-dataset-generation-config:latest"}},
+          "name": "Fusion Classifier Test Dataset Generation", "outputs": [{"description":
+          "Test CSV path.", "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "d16b8bad1bbcd53697548309303713386b759fb14fcee45fd7744da0d8e0308f", "url":
+          "kube-pipe/components/fusion-classifier/dataset/test/component.yaml"}'}
+  - name: fusion-classifier-train-dataset-generation
+    container:
+      args: []
+      command: [python, fc_handler.py, -type, train, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: fusion-classifier-train-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di training del modello FC", "implementation": {"container":
+          {"command": ["python", "fc_handler.py", "-type", "train", "-csv_path", {"outputPath":
+          "csv_path"}], "image": "localhost:5001/step-dataset-generation-config:latest"}},
+          "name": "Fusion Classifier Train Dataset Generation", "outputs": [{"description":
+          "Train CSV path.", "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "4ea9b95c3f49676d913b1f26d508efca06ec67e2aaddf90b99f50453bd3de4ba", "url":
+          "kube-pipe/components/fusion-classifier/dataset/train/component.yaml"}'}
+  - name: fusion-classifier-validation-dataset-generation
+    container:
+      args: []
+      command: [python, fc_handler.py, -type, val, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: fusion-classifier-validation-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di validazione del modello FC", "implementation": {"container":
+          {"command": ["python", "fc_handler.py", "-type", "val", "-csv_path", {"outputPath":
+          "csv_path"}], "image": "localhost:5001/step-dataset-generation-config:latest"}},
+          "name": "Fusion Classifier Validation Dataset Generation", "outputs": [{"description":
+          "Validation CSV path.", "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "a8d0975d69da3266a7358db2bdc82e24eea406ee64e147ef70bbd8694f5a4dba", "url":
+          "kube-pipe/components/fusion-classifier/dataset/val/component.yaml"}'}
+  - name: gene-classifier-model-training
+    container:
+      args: []
+      command: [python3.9, gc_handler.py, -train_csv_path, /tmp/inputs/train_csv_path/data,
+        -val_csv_path, /tmp/inputs/val_csv_path/data, -model_path, /tmp/outputs/model_path/data]
+      image: localhost:5001/step-model-config:latest
+      resources:
+        limits: {nvidia.com/gpu: 1}
+    inputs:
+      artifacts:
+      - {name: gene-classifier-train-dataset-generation-csv_path, path: /tmp/inputs/train_csv_path/data}
+      - {name: gene-classifier-validation-dataset-generation-csv_path, path: /tmp/inputs/val_csv_path/data}
+    outputs:
+      artifacts:
+      - {name: gene-classifier-model-training-model_path, path: /tmp/outputs/model_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Effettua
+          l''addestramento del modello GC", "implementation": {"container": {"command":
+          ["python3.9", "gc_handler.py", "-train_csv_path", {"inputPath": "train_csv_path"},
+          "-val_csv_path", {"inputPath": "val_csv_path"}, "-model_path", {"outputPath":
+          "model_path"}], "image": "localhost:5001/step-model-config:latest"}}, "inputs":
+          [{"description": "Training CSV path.", "name": "train_csv_path", "type":
+          "String"}, {"description": "Validation CSV path.", "name": "val_csv_path",
+          "type": "String"}], "name": "Gene Classifier Model Training", "outputs":
+          [{"description": "H5 Model path.", "name": "model_path", "type": "String"}]}',
+        pipelines.kubeflow.org/component_ref: '{"digest": "1513e7e5e499c56cb389129f278839ed4adb42c2d9503f904e09d62cb427469e",
+          "url": "kube-pipe/components/gene-classifier/model/train/component.yaml"}'}
+  - name: gene-classifier-train-dataset-generation
+    container:
+      args: []
+      command: [python, gc_handler.py, -type, train, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: gene-classifier-train-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di training del modello GC", "implementation": {"container":
+          {"command": ["python", "gc_handler.py", "-type", "train", "-csv_path", {"outputPath":
+          "csv_path"}], "image": "localhost:5001/step-dataset-generation-config:latest"}},
+          "name": "Gene Classifier Train Dataset Generation", "outputs": [{"description":
+          "Train CSV path.", "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "20f9496750b4a6d86f25998527fb11347eaf81fb3b16339c4a204fd76290b3c5", "url":
+          "kube-pipe/components/gene-classifier/dataset/train/component.yaml"}'}
+  - name: gene-classifier-validation-dataset-generation
+    container:
+      args: []
+      command: [python, gc_handler.py, -type, val, -csv_path, /tmp/outputs/csv_path/data]
+      image: localhost:5001/step-dataset-generation-config:latest
+    outputs:
+      artifacts:
+      - {name: gene-classifier-validation-dataset-generation-csv_path, path: /tmp/outputs/csv_path/data}
+    metadata:
+      labels:
+        pipelines.kubeflow.org/kfp_sdk_version: 1.8.22
+        pipelines.kubeflow.org/pipeline-sdk-type: kfp
+        pipelines.kubeflow.org/enable_caching: "true"
+      annotations: {pipelines.kubeflow.org/component_spec: '{"description": "Genera
+          il dataset di validazione del modello GC", "implementation": {"container":
+          {"command": ["python", "gc_handler.py", "-type", "val", "-csv_path", {"outputPath":
+          "csv_path"}], "image": "localhost:5001/step-dataset-generation-config:latest"}},
+          "name": "Gene Classifier Validation Dataset Generation", "outputs": [{"description":
+          "Validation CSV path.", "name": "csv_path", "type": "String"}]}', pipelines.kubeflow.org/component_ref: '{"digest":
+          "df86f828c0e92f2805eeef75b8ba2a1b13df1604b18a4129818f9f5d420348f0", "url":
+          "kube-pipe/components/gene-classifier/dataset/val/component.yaml"}'}
+  arguments:
+    parameters: []
+  serviceAccountName: pipeline-runner

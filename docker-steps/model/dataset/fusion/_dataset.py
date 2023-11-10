@@ -50,11 +50,12 @@ class FusionDataset(MyDataset):
             dataset_type=dataset_type
         )
 
-        # ======================== Load Gene Panel ======================== #
-        self.__gene_panel_path: str = conf.genes_panel_path
-        with open(self.__gene_panel_path, 'r') as gene_panel_file:
-            self.__genes_list: List[str] = gene_panel_file.read().split('\n')
-        self.update_file(self.__gene_panel_path)
+        print('Reading labels...')
+
+        self.__labels_path: str = os.path.join(self.inputs_dir, 'chimeric_label_fusion.pkl')
+
+        with open(self.__labels_path, 'rb') as handle:
+            self.__labels: Dict[str, int] = pickle.load(handle)
 
         if dataset_type == 'test': self.__dataset_path = test_csv_path
         if dataset_type == 'train': self.__dataset_path = train_csv_path
@@ -76,7 +77,9 @@ class FusionDataset(MyDataset):
         )
         # check if inputs tensor are already generateds
         generation_inputs_phase: bool = self.check_file(self.__inputs_path)
+
         print('Generation input phase is', generation_inputs_phase)
+
         if not generation_inputs_phase:
             # get number of processes
             n_proc: int = 1

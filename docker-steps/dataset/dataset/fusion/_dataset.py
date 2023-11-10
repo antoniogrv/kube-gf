@@ -204,18 +204,20 @@ class FusionDataset(MyDataset):
                 test_size=0.11
             )
             # group datasets and dataset paths
-            __datasets: List[pd.DataFrame] = [
-                __train_dataset,
-                __val_dataset,
-                __test_dataset
-            ]
-            __dataset_paths: List[str] = [
-                __train_dataset_path,
-                __val_dataset_path,
-                __test_dataset_path
-            ]
+            if dataset_type == 'test':
+                __datasets: List[pd.DataFrame] = [__test_dataset]
+                __dataset_paths: List[str] = [__test_dataset_path]
+
+            if dataset_type == 'train':
+                __datasets: List[pd.DataFrame] = [__train_dataset]
+                __dataset_paths: List[str] = [__train_dataset_path]
+
+            if dataset_type == 'val':
+                __datasets: List[pd.DataFrame] = [__val_dataset]
+                __dataset_paths: List[str] = [__val_dataset_path]
+
             # shuffles rows, saves datasets as csv, and updates hashes
-            for i in range(3):
+            for i in range(1):
                 __datasets[i] = __datasets[i].sample(frac=1).reset_index(drop=True)
                 __datasets[i].to_csv(__dataset_paths[i], index=False)
                 self.update_dataset(__dataset_paths[i])
@@ -235,65 +237,7 @@ class FusionDataset(MyDataset):
         self.__dataset: pd.DataFrame = pd.read_csv(self.__dataset_path)
         self.__status = self.__dataset.groupby('label')['label'].count()
 
-        # ==================== Create inputs for model ==================== #
-        self.__inputs_path: str = os.path.join(
-            self.inputs_dir,
-            f'chimeric_{conf.len_read}_'
-            f'{conf.n_fusion}_'
-            f'kmer_{conf.len_kmer}_'
-            f'n_words_{conf.n_words}_'
-            f'tokenizer_{conf.tokenizer}_'
-            f'fusion_'
-            f'{self.dataset_type}.pkl'
-        )
-        # check if inputs tensor are already generateds
-        generation_inputs_phase: bool = generation_sets_phase_flag and self.check_file(self.__inputs_path)
-        if not generation_inputs_phase:
-            # get number of processes
-            n_proc: int = 1
-            # get number of kmers and number of sentences
-            __n_kmers: int = conf.len_read - conf.len_kmer + 1
-            __n_sentences: int = __n_kmers - conf.n_words + 1
-            # init inputs
-            self.__inputs: [Dict[str, Union[List[Dict[str, torch.Tensor]], torch.Tensor]]] = []
-            # check if n_proc is greater then 1
-            if n_proc == 1:
-                # call generate sentences encoded from dataset on single process
-                self.__inputs = generate_sentences_encoded_from_dataset(
-                    rows_index=(0, len(self.__dataset)),
-                    dataset=self.__dataset,
-                    n_words=conf.n_words,
-                    n_kmers=__n_kmers,
-                    n_sentences=__n_sentences,
-                    tokenizer=conf.tokenizer
-                )
-            # TODO: debug the call of this function in parallel
-            else:
-                # split dataset on processes
-                rows_for_each_process: List[Tuple[int, int]] = split_dataset_on_processes(
-                    self.__dataset,
-                    n_proc
-                )
-                # call generate sentences encoded from dataset on multi processes
-                with Pool(n_proc) as pool:
-                    results = pool.imap(partial(
-                        generate_sentences_encoded_from_dataset,
-                        dataset=self.__dataset,
-                        n_words=conf.n_words,
-                        n_kmers=__n_kmers,
-                        n_sentences=__n_sentences,
-                        tokenizer=conf.tokenizer
-                    ), rows_for_each_process)
-                    # append all local inputs to global dataset
-                    for local_inputs in results:
-                        self.__inputs += local_inputs
-            with open(self.__inputs_path, 'wb') as handle:
-                pickle.dump(self.__inputs, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            self.update_file(self.__inputs_path)
-        # load inputs
-        else:
-            with open(self.__inputs_path, 'rb') as handle:
-                self.__inputs: [Dict[str, Union[List[Dict[str, torch.Tensor]], torch.Tensor]]] = pickle.load(handle)
+        print('Done!')
 
     def get_labels_dict(self) -> Dict[str, int]:
         return self.__labels

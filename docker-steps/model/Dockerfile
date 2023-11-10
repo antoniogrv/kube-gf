@@ -42,5 +42,6 @@ FROM cuda as core
 
 COPY --from=fs . .
 COPY deps/transcript_label.pkl data/inputs_model/transcript_label.pkl
+COPY deps/chimeric_label_fusion.pkl data/inputs_model/chimeric_label_fusion.pkl
 
 ENTRYPOINT python3.9 gc_handler.py
