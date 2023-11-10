@@ -49,14 +49,14 @@ if __name__ == '__main__':
 
     # Sub-pipeline Gene Classifier
     gc_dataset_train_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/train"))
-    gc_dataset_val_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/train"))
+    gc_dataset_val_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/val"))
 
     gc_model_train_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/model/train"))
 
     # Sub-pipeline Fusion Classifier
     fc_dataset_train_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/dataset/train"))
-    fc_dataset_test_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/dataset/train"))
-    fc_dataset_val_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/dataset/train"))
+    fc_dataset_test_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/dataset/test"))
+    fc_dataset_val_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/dataset/val"))
 
     fc_model_train_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/model/train"))
     fc_model_test_config_op = kfp.components.load_component_from_file(component_path("fusion-classifier/model/test"))
