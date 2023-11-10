@@ -10,8 +10,6 @@ implementation:
     command: [
       python,
       'gc_handler.py',
-      -operation,
-      gene,
       -type,
       val,
       -csv_path, 
