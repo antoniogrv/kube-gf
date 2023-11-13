@@ -20,6 +20,9 @@
   - [Interagire col Docker Registry](#interagire-col-docker-registry)
   - [Creazione dei componenti](#creazione-dei-componenti)
 - [Considerazioni di MLSecOps](#considerazioni-di-mlsecops)
+  - [Iniezione arbitraria di CDK in un pod](#iniezione-arbitraria-di-cdk-in-un-pod)
+  - [Generare un cluster Kind contagiato da CDK](#generare-un-cluster-kind-contagiato-da-cdk)
+  - [Kali Linux Docker Image](#kali-linux-docker-image)
 
 <hr>
 
@@ -368,4 +371,121 @@ Eseguire lo script Python produrrà il manifesto della pipeline, che potrà esse
 
 ## Considerazioni di MLSecOps
 
-*Il contenuto di questa sezione è da redigere.*
+Un'analisi broad di [Container Security](https://www.redhat.com/it/topics/security/container-security) è stata condotta sull'architettura presentata. Più specificamente, si intende approfondire le possibilità interazioni fra un avversario dotato di strumenti di attacco più o meno sofisticati, e il cluster Kubernetes dotato delle sue componenti Kubeflow così come presentato. Questa operazione si inserisce in un più vasto contesto di studi rappresentato dalla branca [MLSecOps](https://mlsecops.com/).
+
+Gli ingredienti di questa analisi si declinano nelle seguenti tecnologie:
+- [Kali Linux Container](https://www.kali.org/)
+- [Zero-dependency Container Penetration Toolkit (CDK)](https://github.com/cdk-team/CDK)
+- [Metasploit Framework](https://docs.metasploit.com/)
+
+In particolare, si intendono indagare le seguenti applicazioni:
+
+- Dall'*esterno*, immaginare un host avversario che tenta di compromettere il cluster Kubernetes. In questo caso, l'host avversario è rappresentato da un container Kali Linux, che monta il toolkit CDK e Metasploit Framework. L'obiettivo è quello di tracciare le difese del cluster, e in particolare del nodo Kubernetes `kind-control-plane`.
+- Dall'*interno*, immaginare un avvesario che ha già compromesso il cluster Kubernetes. In questo caso, l'avversario è in grado di tracciare le vulnerabilità e il perimetro di difesa del nodo Kubernetes (su cui giacciono i pod Kubeflow) mediante il toolkit CDK, ed in particolare gli exploit di Information Gathering. In questo caso, l'obiettivo è individuare informazioni sensibili da poter sfruttare per un escalation.
+
+> Per eseguire l'analisi di sicurezza presentata, non è necessario installare ulteriori dipendenze rispetto a quelle già definite in precedenza. E' sufficiente che il Docker Daemon sia in esecuzione.
+
+### Iniezione arbitraria di CDK in un pod
+
+E' stata realizzata un'immagine Docker che monta il toolkit CDK su base [Alpine](https://alpinelinux.org/). Per costruirla e caricarla sul Docker Registry on-prem, eseguire il seguente comando.
+
+```console
+docker build -t localhost:5000/cdk --file=container-sec/cdk.Dockerfile container-sec && \
+docker push localhost:5001/step-dataset-generation-config:latest
+```
+
+L'mmagine può essere iniettata arbitrariamente nel cluster Kubernetes, sul nodo `kind-control-plane`, producendo un nuovo pod all'interno dello stesso, col fine ultimo di eseguire attacchi di Penetration Testing. Per farlo, eseguire il seguente comando.
+
+```
+kubectl debug node/kind-control-plane -it --image=localhost:5001/cdk
+```
+
+Questo approccio, per quanto indagato, non è stato approfondito ulteriormente, poiché strettamente vincolato alla capacità dell'avversario di iniettare immagini corrotta nel registro, ed eseguire un pull malizioso.
+
+### Generare un cluster Kind contagiato da CDK
+
+Durante l'installazione del sistema, al paragrafo [Provisioning](#provisioning), è stato eseguito uno shell script (`boot-kind-gpu.sh`) per generare il cluster Kubernetes con Kind. Tale script, per rappresentare i nodi del cluster, utilizza l'immagine Docker [kindest/node](https://hub.docker.com/r/kindest/node/). E' invece possibile generare un cluster Kind corrotto, popolato da nodi infetti col toolkit CDK, sfruttando un'immagine Docker personalizzata chiamata `kind-cdk` e realizzata contestualmente a questo lavoro di tesi. Costruendo il cluster in questo modo, è possibile indagare le difese del cluster Kubernetes, e in particolare del nodo `kind-control-plane` infetto, eseguendo valutazioni di Information Gathering con CDK.
+
+Per costruire l'immagine Docker `kind-cdk`, eseguire il seguente comando.
+
+```console
+docker build -t kind-cdk --file=container-sec/kind.Dockerfile container-sec
+```
+
+A questo punto, è possibile reiterare le stesse operazioni descritte nel capitolo [Installazione del sistema](#installazione-del-sistema), avendo però cura di utilizzare lo shell script `boot-kind-gpu-cdk.sh` invece di `boot-kind-gpu.sh`. Lo script produrrà un cluster Kind chiamato `kind-cdk` associabile a `kubectl` col comando `kubectl cluster-info --context kind-kind-cdk`.
+
+Conclusa l'installazione, sarà possibile accedere al control plane di Kubernetes col seguente comando, per poi confermare che CDK sia attivo usando il comando `cdk`.
+
+```console
+docker exec -it kind-control-plane sh
+```
+
+E' adesso possibile individuare le debolezze note del container con `cdk eva`. E' immediantamente osservabile che il nodo risulta vulnerabile sotto molteplici aspetti, così come segnalato dal toolkit. Ad esempio, risultano esposte alcune variabili d'ambiente e file di configurazione che potrebbero essere sfruttate per un escalation.
+
+```log
+[  Information Gathering - Services  ]
+2023/11/13 11:49:46 sensitive env found: container=docker
+2023/11/13 11:49:46 sensitive env found: KUBECONFIG=/etc/kubernetes/admin.conf
+
+[..]
+
+cat /etc/kubernetes/admin.conf
+
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: [..]
+    client-key-data: [..]
+
+```
+
+Il file di log prodotto da `cdk eva` a partire da un nodo Kind vergine è disponibile nella directory `container-sec/logs` di questa repository.
+
+### Kali Linux Docker Image
+
+Una versione personalizzata di Kali Linux (che monta, fra le altre cose, il toolkit CDK) può essere prodotta a partire dal Dockerfile `kali.Dockerfile` presente nella directory `container-sec`. Per farlo, eseguire il seguente comando.
+
+```console
+docker build -t kali-cdk --file=container-sec/kali.Dockerfile container-sec
+```
+
+Per eseguire questa versione di Kali Linux, è sufficiente eseguire:
+
+```console
+docker run -i --tty kali-cdk
+```
+
+Di seguito la costruzione del `kali.Dockerfile`, comprensivo di CDK e delle dipendenze necessarie per l'utilizzo di Metasploit Framework.
+
+```dockerfile
+# Produce un'immagine Docker di Kali Linux per le analisi di Container Security e l'esecuzione di attacchi di Penetration Testing.
+# Fare riferimento alla documentazione del progetto per maggiori dettagli.
+
+FROM kalilinux/kali-rolling@sha256:b6bd6a9e6f62171e4e0d8f43f4b0d02f1df0ba493225da852968576bc2d602d2
+
+WORKDIR /root
+ENV DEBIAN_FRONTEND=noninteractive
+
+# L'immagine di Kali Linux non include di default il pacchetto kali-linux-headless ..
+# .. che contiene la maggior parte degli strumenti di analisi e attacco.
+# Rif. https://www.kali.org/docs/containers/using-kali-docker-images/
+
+RUN apt -y update && \
+    apt -y dist-upgrade && \
+    apt -y autoremove && \
+    apt clean && \
+    apt -y install wget
+
+# Siamo interessati esclusivamente a Metasploit Framework, contenuto nel pacchetto kali-linux-top10.
+# Immagini più organiche potrebbero utilizzare il pacchetto kali-linux-all.
+# Rif. https://www.kali.org/blog/kali-linux-metapackages/
+
+RUN apt -y install -f kali-tools-top10
+
+# Iniezione arbitraria del binario del Zero Dependency Container Penetration Toolkit
+# Rif. https://github.com/cdk-team/CDK
+
+RUN wget https://github.com/cdk-team/CDK/releases/download/v1.5.2/cdk_linux_amd64 && \
+    chmod a+x cdk_linux_amd64 && \
+    mv cdk_linux_amd64 /usr/local/bin/cdk
+```
