@@ -1,7 +1,7 @@
 #!/bin/sh
 set -o errexit
 
-# Rif. https://kind.sigs.k8s.io/docs/user/local-registry/
+# Questo script genera un control plane di Kubernetes e tre worker nodes senza supporto per la GPU.
 
 reg_name='kind-registry'
 reg_port='5001'
@@ -24,6 +24,8 @@ containerdConfigPatches:
   [plugins."io.containerd.grpc.v1.cri".registry]
     config_path = "/etc/containerd/certs.d"
 EOF
+
+# Rif. https://kind.sigs.k8s.io/docs/user/local-registry/
 
 REGISTRY_DIR="/etc/containerd/certs.d/localhost:${reg_port}"
 for node in $(kind get nodes); do

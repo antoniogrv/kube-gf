@@ -1,7 +1,8 @@
 #!/bin/sh
 set -o errexit
 
-# Questo script genera un control plane di Kubernetes con supporto per la GPU.
+# Questo script genera un control plane di Kubernetes contagiato da CDK e con supporto per la GPU. 
+# Rif. https://github.com/cdk-team/CDK
 
 reg_name='kind-registry'
 reg_port='5001'
@@ -17,12 +18,12 @@ if [ -e "${nvidia_config_file}" ]; then
   sudo sed -i '/accept-nvidia-visible-devices-as-volume-mounts/c\accept-nvidia-visible-devices-as-volume-mounts = true' ${nvidia_config_file}
 fi
 
-cat <<EOF | kind create cluster --name kind --config=-
+cat <<EOF | kind create cluster --name kind-cdk --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
-  image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
+  image: kind-cdk
   extraMounts:
     - hostPath: /dev/null
       containerPath: /var/run/nvidia-container-devices/all
