@@ -436,7 +436,6 @@ users:
   user:
     client-certificate-data: [..]
     client-key-data: [..]
-
 ```
 
 Il file di log prodotto da `cdk eva` a partire da un nodo Kind vergine è disponibile nella directory `container-sec/logs` di questa repository.
