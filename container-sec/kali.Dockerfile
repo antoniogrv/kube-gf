@@ -3,16 +3,24 @@
 
 FROM kalilinux/kali-rolling@sha256:b6bd6a9e6f62171e4e0d8f43f4b0d02f1df0ba493225da852968576bc2d602d2
 
+WORKDIR /root
+ENV DEBIAN_FRONTEND=noninteractive
+
 # L'immagine di Kali Linux non include di default il pacchetto kali-linux-headless ..
 # .. che contiene la maggior parte degli strumenti di analisi e attacco.
 # Rif. https://www.kali.org/docs/containers/using-kali-docker-images/
 
-RUN apt update && \
-    dpkg --configure -a && \
-    apt remove --purge console-common console-data && \
-    apt install -y console-common console-data
+RUN apt -y update && \
+    apt -y dist-upgrade && \
+    apt -y autoremove && \
+    apt clean && \
+    apt -y install wget
 
-RUN apt -y install -f kali-linux-headless
+# Siamo interessati esclusivamente a Metasploit Framework, contenuto nel pacchetto kali-linux-top10.
+# Immagini più organiche potrebbero utilizzare il pacchetto kali-linux-all.
+# Rif. https://www.kali.org/blog/kali-linux-metapackages/
+
+RUN apt -y install -f kali-tools-top10
 
 # Iniezione arbitraria del binario del Zero Dependency Container Penetration Toolkit
 # Rif. https://github.com/cdk-team/CDK

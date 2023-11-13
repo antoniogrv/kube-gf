@@ -1,0 +1,420 @@
+CDK (Container DucK)
+CDK Version(GitCommit): d9ab55702036c28e793378cc47605e21206dfef1
+Zero-dependency cloudnative k8s/docker/serverless penetration toolkit by cdxy & neargle
+Find tutorial, configuration and use-case in https://github.com/cdk-team/CDK/
+
+[  Information Gathering - System Info  ]
+	/usr/bin/chfn
+	/usr/bin/chsh
+	/usr/bin/gpasswd
+	/usr/bin/newgrp
+	/usr/bin/passwd
+	/sbin/mount.nfs
+	/bin/fusermount3
+	/bin/su
+
+[  Information Gathering - Services  ]
+2023/11/13 11:49:46 sensitive env found:
+        container=docker
+2023/11/13 11:49:46 sensitive env found:
+        KUBECONFIG=/etc/kubernetes/admin.conf
+2023/11/13 11:49:46 service found in process:
+        609     397     kube-controller
+2023/11/13 11:49:46 service found in process:
+        678     482     kube-scheduler
+2023/11/13 11:49:46 service found in process:
+        686     358     kube-apiserver
+2023/11/13 11:49:46 service found in process:
+        788     1       kubelet
+2023/11/13 11:49:46 service found in process:
+        6464    2716    python3
+2023/11/13 11:49:46 service found in process:
+        6486    6464    python3
+2023/11/13 11:49:46 service found in process:
+        38045   38027   python3
+2023/11/13 11:49:46 service found in process:
+        57038   55956   kubectl
+
+[  Information Gathering - Commands and Capabilities  ]
+2023/11/13 11:49:46 available commands:
+        curl,wget,kubectl,find,ps,apt,dpkg,capsh,mount,base64,perl
+2023/11/13 11:49:46 Capabilities hex of Caps(CapInh|CapPrm|CapEff|CapBnd|CapAmb):
+        CapInh: 0000000000000000
+        CapPrm: 000001ffffffffff
+        CapEff: 000001ffffffffff
+        CapBnd: 000001ffffffffff
+        CapAmb: 0000000000000000
+        Cap decode: 0x000001ffffffffff = CAP_CHOWN,CAP_DAC_OVERRIDE,CAP_DAC_READ_SEARCH,CAP_FOWNER,CAP_FSETID,CAP_KILL,CAP_SETGID,CAP_SETUID,CAP_SETPCAP,CAP_LINUX_IMMUTABLE,CAP_NET_BIND_SERVICE,CAP_NET_BROADCAST,CAP_NET_ADMIN,CAP_NET_RAW,CAP_IPC_LOCK,CAP_IPC_OWNER,CAP_SYS_MODULE,CAP_SYS_RAWIO,CAP_SYS_CHROOT,CAP_SYS_PTRACE,CAP_SYS_PACCT,CAP_SYS_ADMIN,CAP_SYS_BOOT,CAP_SYS_NICE,CAP_SYS_RESOURCE,CAP_SYS_TIME,CAP_SYS_TTY_CONFIG,CAP_MKNOD,CAP_LEASE,CAP_AUDIT_WRITE,CAP_AUDIT_CONTROL,CAP_SETFCAP,CAP_MAC_OVERRIDE,CAP_MAC_ADMIN,CAP_SYSLOG,CAP_WAKE_ALARM,CAP_BLOCK_SUSPEND,CAP_AUDIT_READ,CAP_PERFMON,CAP_BPF,CAP_CHECKPOINT_RESTORE
+        Added capability list: CAP_DAC_READ_SEARCH,CAP_LINUX_IMMUTABLE,CAP_NET_BROADCAST,CAP_NET_ADMIN,CAP_IPC_LOCK,CAP_IPC_OWNER,CAP_SYS_MODULE,CAP_SYS_RAWIO,CAP_SYS_PTRACE,CAP_SYS_PACCT,CAP_SYS_ADMIN,CAP_SYS_BOOT,CAP_SYS_NICE,CAP_SYS_RESOURCE,CAP_SYS_TIME,CAP_SYS_TTY_CONFIG,CAP_LEASE,CAP_AUDIT_CONTROL,CAP_MAC_OVERRIDE,CAP_MAC_ADMIN,CAP_SYSLOG,CAP_WAKE_ALARM,CAP_BLOCK_SUSPEND,CAP_AUDIT_READ,CAP_PERFMON,CAP_BPF,CAP_CHECKPOINT_RESTORE
+[*] Maybe you can exploit the Capabilities below:
+[!] CAP_DAC_READ_SEARCH enabled. You can read files from host. Use 'cdk run cap-dac-read-search' ... for exploitation.
+[!] CAP_SYS_MODULE enabled. You can escape the container via loading kernel module. More info at https://xcellerator.github.io/posts/docker_escape/.
+Critical - SYS_ADMIN Capability Found. Try 'cdk run rewrite-cgroup-devices/mount-cgroup/...'.
+
+[  Information Gathering - Mounts  ]
+0:785 / / rw,relatime - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/F7ZUJYUFOLGO2M24LPFQXWW7HI:/var/lib/docker/overlay2/l/ZCU2TMGJBCUOLZKN62D6OJLLTP:/var/lib/docker/overlay2/l/VNUCPJ7Y325QF44PGYR5ML2RKX:/var/lib/docker/overlay2/l/AQHCHOVZD6NBTXTXAUS4RJMLDC,upperdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/diff,workdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/work,nouserxattr
+0:849 / /proc rw,nosuid,nodev,noexec,relatime - proc proc rw
+0:850 / /dev rw,nosuid - tmpfs tmpfs rw,size=65536k,mode=755,inode64
+0:851 / /dev/pts rw,nosuid,noexec,relatime - devpts devpts rw,gid=5,mode=620,ptmxmode=666
+0:852 / /sys ro,nosuid,nodev,noexec,relatime - sysfs sysfs ro
+0:27 / /sys/fs/cgroup rw,nosuid,nodev,noexec,relatime - cgroup2 cgroup rw
+0:848 / /dev/mqueue rw,nosuid,nodev,noexec,relatime - mqueue mqueue rw
+0:853 / /dev/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+259:5 /var/lib/docker/volumes/10c845e690693d0d5cb1823b6967bba68b28a08a5e4baa2c7f50747c45fa96db/_data /var rw,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+0:854 / /run rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,mode=755,inode64
+0:855 / /tmp rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,inode64
+259:5 /usr/lib/modules /lib/modules ro,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /var/lib/docker/containers/272bc614daed9f84f31999394630c9fac8a6caa950243ba2a10c145a3bc7f27e/resolv.conf /etc/resolv.conf rw,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /var/lib/docker/containers/272bc614daed9f84f31999394630c9fac8a6caa950243ba2a10c145a3bc7f27e/hostname /etc/hostname rw,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /var/lib/docker/containers/272bc614daed9f84f31999394630c9fac8a6caa950243ba2a10c145a3bc7f27e/hosts /etc/hosts rw,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+0:5 /null /run/nvidia-container-devices/all rw,nosuid,relatime - devtmpfs udev rw,size=8087400k,nr_inodes=2021850,mode=755,inode64
+0:856 / /proc/driver/nvidia rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,mode=555,inode64
+259:5 /usr/bin/nvidia-smi /usr/bin/nvidia-smi ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/bin/nvidia-debugdump /usr/bin/nvidia-debugdump ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/bin/nvidia-persistenced /usr/bin/nvidia-persistenced ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/bin/nvidia-cuda-mps-control /usr/bin/nvidia-cuda-mps-control ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/bin/nvidia-cuda-mps-server /usr/bin/nvidia-cuda-mps-server ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-cfg.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-cfg.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libcuda.so.535.129.03 /usr/lib/x86_64-linux-gnu/libcuda.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libcudadebugger.so.535.129.03 /usr/lib/x86_64-linux-gnu/libcudadebugger.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-opencl.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-opencl.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-ptxjitcompiler.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-allocator.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-pkcs11-openssl3.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-pkcs11-openssl3.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/x86_64-linux-gnu/libnvidia-nvvm.so.535.129.03 /usr/lib/x86_64-linux-gnu/libnvidia-nvvm.so.535.129.03 ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/firmware/nvidia/535.129.03/gsp_ga10x.bin /lib/firmware/nvidia/535.129.03/gsp_ga10x.bin ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+259:5 /usr/lib/firmware/nvidia/535.129.03/gsp_tu10x.bin /lib/firmware/nvidia/535.129.03/gsp_tu10x.bin ro,nosuid,nodev,relatime - ext4 /dev/nvme0n1p5 rw,errors=remount-ro
+0:24 /nvidia-persistenced/socket /run/nvidia-persistenced/socket rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=1625120k,mode=755,inode64
+0:5 /nvidiactl /dev/nvidiactl ro,nosuid,noexec,relatime - devtmpfs udev rw,size=8087400k,nr_inodes=2021850,mode=755,inode64
+0:5 /nvidia-uvm /dev/nvidia-uvm ro,nosuid,noexec,relatime - devtmpfs udev rw,size=8087400k,nr_inodes=2021850,mode=755,inode64
+0:5 /nvidia-uvm-tools /dev/nvidia-uvm-tools ro,nosuid,noexec,relatime - devtmpfs udev rw,size=8087400k,nr_inodes=2021850,mode=755,inode64
+0:5 /nvidia0 /dev/nvidia0 ro,nosuid,noexec,relatime - devtmpfs udev rw,size=8087400k,nr_inodes=2021850,mode=755,inode64
+0:22 /driver/nvidia/gpus/0000:01:00.0 /proc/driver/nvidia/gpus/0000:01:00.0 ro,nosuid,nodev,noexec,relatime - proc proc rw
+0:851 /0 /dev/console rw,nosuid,noexec,relatime - devpts devpts rw,gid=5,mode=620,ptmxmode=666
+0:785 /kind/product_name /sys/devices/virtual/dmi/id/product_name ro,relatime - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/F7ZUJYUFOLGO2M24LPFQXWW7HI:/var/lib/docker/overlay2/l/ZCU2TMGJBCUOLZKN62D6OJLLTP:/var/lib/docker/overlay2/l/VNUCPJ7Y325QF44PGYR5ML2RKX:/var/lib/docker/overlay2/l/AQHCHOVZD6NBTXTXAUS4RJMLDC,upperdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/diff,workdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/work,nouserxattr
+0:785 /kind/product_uuid /sys/devices/virtual/dmi/id/product_uuid ro,relatime - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/F7ZUJYUFOLGO2M24LPFQXWW7HI:/var/lib/docker/overlay2/l/ZCU2TMGJBCUOLZKN62D6OJLLTP:/var/lib/docker/overlay2/l/VNUCPJ7Y325QF44PGYR5ML2RKX:/var/lib/docker/overlay2/l/AQHCHOVZD6NBTXTXAUS4RJMLDC,upperdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/diff,workdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/work,nouserxattr
+0:785 /kind/product_uuid /sys/devices/virtual/dmi/id/product_uuid ro,relatime - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/F7ZUJYUFOLGO2M24LPFQXWW7HI:/var/lib/docker/overlay2/l/ZCU2TMGJBCUOLZKN62D6OJLLTP:/var/lib/docker/overlay2/l/VNUCPJ7Y325QF44PGYR5ML2RKX:/var/lib/docker/overlay2/l/AQHCHOVZD6NBTXTXAUS4RJMLDC,upperdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/diff,workdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/work,nouserxattr
+0:785 /kind/product_uuid /kind/product_uuid rw,relatime - overlay overlay rw,lowerdir=/var/lib/docker/overlay2/l/F7ZUJYUFOLGO2M24LPFQXWW7HI:/var/lib/docker/overlay2/l/ZCU2TMGJBCUOLZKN62D6OJLLTP:/var/lib/docker/overlay2/l/VNUCPJ7Y325QF44PGYR5ML2RKX:/var/lib/docker/overlay2/l/AQHCHOVZD6NBTXTXAUS4RJMLDC,upperdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/diff,workdir=/var/lib/docker/overlay2/de1348777e0dcb7c61ab3085189c410371793ddff2a72117b4ebf7c27f9bd08a/work,nouserxattr
+0:857 / /run/lock rw,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,size=5120k,inode64
+0:858 / /proc/sys/fs/binfmt_misc rw,relatime - autofs systemd-1 rw,fd=27,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=1895902
+0:859 / /dev/hugepages rw,relatime - hugetlbfs hugetlbfs rw,pagesize=2M
+0:7 / /sys/kernel/debug rw,nosuid,nodev,noexec,relatime - debugfs debugfs rw
+0:12 / /sys/kernel/tracing rw,nosuid,nodev,noexec,relatime - tracefs tracefs rw
+0:33 / /sys/fs/fuse/connections rw,nosuid,nodev,noexec,relatime - fusectl fusectl rw
+0:20 / /sys/kernel/config rw,nosuid,nodev,noexec,relatime - configfs configfs rw
+0:860 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/8215d581b1fc4b7b016783f0d7802b3cfb1220c4a70c21d40b73e92eb02fd933/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:861 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/8215d581b1fc4b7b016783f0d7802b3cfb1220c4a70c21d40b73e92eb02fd933/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/5/work,nouserxattr
+0:871 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/ff0c009413d5aad469e6da4521f0584d4b262b108166a428066792b25800eee8/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:872 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/ff0c009413d5aad469e6da4521f0584d4b262b108166a428066792b25800eee8/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/7/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/7/work,nouserxattr
+0:883 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/c10c8228c2e4f126a6b791668920bd8bd764a52de28d11df4229c95c0e0df33e/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:884 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/c10c8228c2e4f126a6b791668920bd8bd764a52de28d11df4229c95c0e0df33e/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/6/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/6/work,nouserxattr
+0:894 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/f2d959c23d680191c9f3d7635b4ef496a44f6b2de8a6273fdf6e34f5562f2ae8/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:895 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/f2d959c23d680191c9f3d7635b4ef496a44f6b2de8a6273fdf6e34f5562f2ae8/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/8/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/8/work,nouserxattr
+0:905 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/ae5d25a56a23f5ffc57222b7ce8dad55deb7faec9178631f5c8fece20f45cbe4/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/33/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/30/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/19/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/15/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/10/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/37/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/37/work,nouserxattr
+0:914 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/f75679fd45ba827ed2209481225d66f4bc9c3fcdc8c5d481105b6e7ef680c5d2/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/44/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/41/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/38/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/34/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/29/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/26/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/23/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/20/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/16/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/12/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/9/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/47/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/47/work,nouserxattr
+0:923 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/04f3deca06e688707206fed867d9825fcb8e614fd9414d65968b655bcc2cc720/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/45/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/41/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/38/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/34/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/29/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/26/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/23/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/20/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/16/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/12/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/9/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/49/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/49/work,nouserxattr
+0:924 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/955f299b40ef5166a1c15a44d5abaeba41889a6014a4d68742e4ad4526144c5c/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/46/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/41/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/38/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/34/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/29/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/26/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/23/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/20/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/16/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/12/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/9/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/48/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/48/work,nouserxattr
+0:941 / /var/lib/kubelet/pods/3fd11978-dbd9-46bc-aa47-de9b4373cea5/volumes/kubernetes.io~projected/kube-api-access-754rj rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:942 / /var/lib/kubelet/pods/58196194-f322-4700-898c-c38b82ee10b0/volumes/kubernetes.io~projected/kube-api-access-58h8f rw,relatime - tmpfs tmpfs rw,size=51200k,inode64
+0:943 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/60d96438a429eaa7c715156fe73df51bdf5c59f356aa5a45fa8df941139717e8/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:944 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/6d24ebabb761495803bf6bcf16bbbfac679a38b8fbb5b192e92e9144239e4e05/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:946 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/6d24ebabb761495803bf6bcf16bbbfac679a38b8fbb5b192e92e9144239e4e05/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/51/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/51/work,nouserxattr
+0:945 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/60d96438a429eaa7c715156fe73df51bdf5c59f356aa5a45fa8df941139717e8/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/50/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/50/work,nouserxattr
+0:970 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/5f43add8579f7f66a18ccd85059b742eadb6dca149d9dfebfe9c4a71c9cfb5d5/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/57/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/56/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/54/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/52/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/58/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/58/work,nouserxattr
+0:966 / /var/lib/kubelet/pods/b45165bc-3386-4847-9fd7-96c2575b2a73/volumes/kubernetes.io~projected/kube-api-access-g58mh rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:976 / /var/lib/kubelet/pods/ed152c20-d1f5-4809-a32d-8f86e307268b/volumes/kubernetes.io~projected/kube-api-access-6lnkf rw,relatime - tmpfs tmpfs rw,size=174080k,inode64
+0:965 / /var/lib/kubelet/pods/0afa6b4f-93ae-41d4-b67c-a1430f4efc3e/volumes/kubernetes.io~projected/kube-api-access-lpsxh rw,relatime - tmpfs tmpfs rw,size=174080k,inode64
+0:977 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/29ad567f1ebf78173a8f0b2b349eb3ea79d626120df1611defbf7f11faeb8c85/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026535868] /run/netns/cni-d128b74b-f6ed-7632-49ad-7e8f29e7bc15 rw - nsfs nsfs rw
+0:978 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/235771ab289dccf1ccede3f3133ba525f7101c301a3489dfb9b0fea3691fc4d3/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026535928] /run/netns/cni-ecc0c4b9-e9b0-0c4b-b605-b1ff524e5a67 rw - nsfs nsfs rw
+0:979 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/6b86a6829f9cda157d0f0d347d57bc10a7e88d903a1af45a61673c4e863bd5b3/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026535983] /run/netns/cni-c6134f2f-0bbc-2454-5bfb-216627629ee5 rw - nsfs nsfs rw
+0:982 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/29ad567f1ebf78173a8f0b2b349eb3ea79d626120df1611defbf7f11faeb8c85/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/59/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/59/work,nouserxattr
+0:984 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/235771ab289dccf1ccede3f3133ba525f7101c301a3489dfb9b0fea3691fc4d3/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/60/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/60/work,nouserxattr
+0:986 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/6b86a6829f9cda157d0f0d347d57bc10a7e88d903a1af45a61673c4e863bd5b3/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/61/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/61/work,nouserxattr
+0:980 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/6ef1ef92e87629f341b87173718a712348a7d18b53a71159ab5db8f1ea8e91ad/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/66/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/64/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/71/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/71/work,nouserxattr
+0:988 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/2d41a40f0d698c61442ea679ad3c4b8dda88745941c60a8bd7c0398e23b68fab/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/66/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/64/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/72/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/72/work,nouserxattr
+0:1024 / /var/lib/kubelet/pods/5dfb540f-5614-4214-ab86-497e7bd8f5d5/volumes/kubernetes.io~projected/kube-api-access-fk26d rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1023 / /var/lib/kubelet/pods/1badea66-bf32-4004-a9b0-dff62a285b7f/volumes/kubernetes.io~projected/kube-api-access-m87n9 rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1025 / /var/lib/kubelet/pods/0996e80f-5048-4533-878e-c8a95d2d43ae/volumes/kubernetes.io~projected/kube-api-access-qrp4w rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1027 / /var/lib/kubelet/pods/0555c550-0a2f-4592-8da4-5cd4b096158a/volumes/kubernetes.io~projected/kube-api-access-t6z9w rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1026 / /var/lib/kubelet/pods/17376f38-a431-4332-b25d-5c0a5759dc5c/volumes/kubernetes.io~projected/kube-api-access-df4pc rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1036 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/8b8ad7906232cd8472f5a53ee3e444c735a9c1815914f3a0a57ac26dbb9d2051/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536062] /run/netns/cni-1ca4ca94-7155-53a8-150f-2988f698ccfd rw - nsfs nsfs rw
+0:1037 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/8b8ad7906232cd8472f5a53ee3e444c735a9c1815914f3a0a57ac26dbb9d2051/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/81/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/81/work,nouserxattr
+0:1039 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/a10700c03885f10883e33f1d634bb772fcb83b0eb9c22b8486e8d6275128cfd2/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536119] /run/netns/cni-41d55269-14bd-8498-41d9-be4ed96e7bb5 rw - nsfs nsfs rw
+0:1040 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/a6c44972c65f1b5a570288aff5c61feb641e3ffceb120f36bd9a5cbf901f0921/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:1041 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/a10700c03885f10883e33f1d634bb772fcb83b0eb9c22b8486e8d6275128cfd2/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/82/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/82/work,nouserxattr
+0:4 net:[4026536176] /run/netns/cni-75d1dc72-5242-ca35-b00e-8c8801c4fa1f rw - nsfs nsfs rw
+0:1049 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/1683d173c8ffe62bada6c9ed6440024979bf86bb30dba4e53d85b630f391f408/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536241] /run/netns/cni-ca30df32-1d69-d788-86da-58bedd9f883d rw - nsfs nsfs rw
+0:1058 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/a6c44972c65f1b5a570288aff5c61feb641e3ffceb120f36bd9a5cbf901f0921/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/83/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/83/work,nouserxattr
+0:1069 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/1683d173c8ffe62bada6c9ed6440024979bf86bb30dba4e53d85b630f391f408/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/84/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/84/work,nouserxattr
+0:1084 / /var/lib/kubelet/pods/cdb3d040-d228-4207-8b13-b672fe6ce03e/volumes/kubernetes.io~projected/kube-api-access-8zkxg rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1085 / /var/lib/kubelet/pods/cdb3d040-d228-4207-8b13-b672fe6ce03e/volumes/kubernetes.io~projected/persistenceagent-sa-token rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1086 / /var/lib/kubelet/pods/74fbaf8a-7be3-4c0d-992f-c34c3bd48b6f/volumes/kubernetes.io~projected/kube-api-access-6gbg5 rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1087 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/88bd89242568588979636fe7a369bee656f156b01bc9a398e69d6858656495d0/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536306] /run/netns/cni-7e3925f7-9543-57d1-14c5-df7449f8bf3e rw - nsfs nsfs rw
+0:1088 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/88bd89242568588979636fe7a369bee656f156b01bc9a398e69d6858656495d0/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/85/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/85/work,nouserxattr
+0:1090 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/7c347cb726b47d390dc5e3b76547eddc9e825cc0aec10004b6a77d8a2e354542/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536363] /run/netns/cni-4dcbfd2a-b7bb-31e5-13d1-255af490dd4d rw - nsfs nsfs rw
+0:1091 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/7c347cb726b47d390dc5e3b76547eddc9e825cc0aec10004b6a77d8a2e354542/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/86/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/86/work,nouserxattr
+0:1093 / /var/lib/kubelet/pods/c28378fb-48d0-41be-a061-065a928c0001/volumes/kubernetes.io~projected/kube-api-access-tlq56 rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1112 / /var/lib/kubelet/pods/3e5d9890-1eed-4860-beeb-2bc7a4ab6c2f/volumes/kubernetes.io~projected/kube-api-access-zcmdw rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1113 / /var/lib/kubelet/pods/bb99dbc8-feeb-4c73-852c-d0f0a4f4f755/volumes/kubernetes.io~projected/kube-api-access-j69bh rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1114 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/fbb2da1c38cda0e9ea3fe4572a1f5717dbfa964df4a520a6182053ef01c8e5df/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536428] /run/netns/cni-ca4ae870-23d2-1bf6-0317-648f050dd575 rw - nsfs nsfs rw
+0:1115 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/fbb2da1c38cda0e9ea3fe4572a1f5717dbfa964df4a520a6182053ef01c8e5df/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/87/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/87/work,nouserxattr
+0:1126 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/8a6e7b2f37b0ab0b0819948670d8b17e90aad9e11b3efc9e76e99d29dad7063c/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536489] /run/netns/cni-3ddd24b5-b1b0-4581-97f4-98b838dcb28c rw - nsfs nsfs rw
+0:1127 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/8a6e7b2f37b0ab0b0819948670d8b17e90aad9e11b3efc9e76e99d29dad7063c/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/88/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/88/work,nouserxattr
+0:1129 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/6bf81603bf46ef68e3b06e5286aa3a7d4b4ebf26f6f68fe0417ef7fe6beaebfc/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536546] /run/netns/cni-346eff1a-2d2d-60a9-4503-4544a0896cf6 rw - nsfs nsfs rw
+0:1130 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/6bf81603bf46ef68e3b06e5286aa3a7d4b4ebf26f6f68fe0417ef7fe6beaebfc/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/89/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/89/work,nouserxattr
+0:1150 / /var/lib/kubelet/pods/34ae904c-968c-474a-a45b-66ffa0a43e73/volumes/kubernetes.io~projected/kube-api-access-l7m8m rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1151 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/5e5dbbc00a96238ee9eeaf8a29c60284db440c12df3c886a18d2c2741622c572/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536611] /run/netns/cni-fdae4280-11c7-8ef4-4dd7-07813be004e6 rw - nsfs nsfs rw
+0:1152 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/5e5dbbc00a96238ee9eeaf8a29c60284db440c12df3c886a18d2c2741622c572/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/90/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/90/work,nouserxattr
+0:1163 / /var/lib/kubelet/pods/c47fd323-4192-4073-bc01-20c8a971114a/volumes/kubernetes.io~projected/kube-api-access-pgpdw rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1164 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/f8cfb4e0acc86a8503a4e4012234397ddfc1ba5492ea610ac33d949ebefcdbbd/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536672] /run/netns/cni-6db23866-2a11-b32f-eb95-e4723359e9b0 rw - nsfs nsfs rw
+0:1165 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/f8cfb4e0acc86a8503a4e4012234397ddfc1ba5492ea610ac33d949ebefcdbbd/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/91/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/91/work,nouserxattr
+0:1176 / /var/lib/kubelet/pods/ec7848fa-ad6f-4bbb-a42a-a80efb265db0/volumes/kubernetes.io~projected/kube-api-access-pxqnm rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1177 / /var/lib/kubelet/pods/139d024f-a32d-4e1a-bffa-2bb81f80cfb5/volumes/kubernetes.io~projected/kube-api-access-9mcd9 rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1178 / /var/lib/kubelet/pods/b8e6afa6-2b11-40f0-8f65-fcab3b36dd8d/volumes/kubernetes.io~projected/kube-api-access-gkm6k rw,relatime - tmpfs tmpfs rw,size=358400k,inode64
+0:1179 / /var/lib/kubelet/pods/cabd2201-7048-41b6-8dd2-3c628ecb9e6b/volumes/kubernetes.io~projected/kube-api-access-rgg87 rw,relatime - tmpfs tmpfs rw,size=16251196k,inode64
+0:1180 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/0e539e38ddd66196ff692d9f67561e8e91ac6f27c4ecabb3a0ccd1e9b8cf0fd9/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536733] /run/netns/cni-90eb32c0-e195-e2e6-2cec-6ccf6fdfa3a6 rw - nsfs nsfs rw
+0:1181 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/26202ab307fc02862f06d4f522a489d5cd961d9195fe83386cf76a06cafd2bfc/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536788] /run/netns/cni-5ed25328-9d08-b932-8903-0c5cda2038eb rw - nsfs nsfs rw
+0:1182 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/e16675edf3f0b0ff08e7ab26e7505d7721d0f21401557321da695127b010f331/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536843] /run/netns/cni-027f086e-1e1b-f4c9-c511-d815355c79d7 rw - nsfs nsfs rw
+0:1183 / /run/containerd/io.containerd.grpc.v1.cri/sandboxes/78bf1e84defd22e59cd9958dddfe3e5511fab02f47b084a310c7963fe66ff59d/shm rw,nosuid,nodev,noexec,relatime - tmpfs shm rw,size=65536k,inode64
+0:4 net:[4026536900] /run/netns/cni-78d28004-264a-b9ac-d7d9-a67a2458f3af rw - nsfs nsfs rw
+0:1184 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/0e539e38ddd66196ff692d9f67561e8e91ac6f27c4ecabb3a0ccd1e9b8cf0fd9/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/94/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/94/work,nouserxattr
+0:1186 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/26202ab307fc02862f06d4f522a489d5cd961d9195fe83386cf76a06cafd2bfc/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/95/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/95/work,nouserxattr
+0:1188 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/e16675edf3f0b0ff08e7ab26e7505d7721d0f21401557321da695127b010f331/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/96/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/96/work,nouserxattr
+0:1190 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/78bf1e84defd22e59cd9958dddfe3e5511fab02f47b084a310c7963fe66ff59d/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/1/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/97/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/97/work,nouserxattr
+0:1246 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/7b2031a19985ba01562f63f1299b425b50b046367a40d19bd90382c0165d7402/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/126/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/125/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/124/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/123/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/122/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/121/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/120/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/119/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/118/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/117/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/116/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/114/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/127/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/127/work,nouserxattr
+0:1273 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/25baa98ecd0273a6ee14cea2db5994a969eecba8b53b08182e04477541abaf3e/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/167/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/166/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/165/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/164/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/163/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/157/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/168/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/168/work,nouserxattr
+0:1282 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/5ce3696f4c6f75624961acbe2983822da1c16a7047f5b857c8b686bf43600bfe/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/178/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/177/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/176/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/175/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/174/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/173/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/170/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/169/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/179/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/179/work,nouserxattr
+0:1228 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/210/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/208/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/207/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/206/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/201/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/200/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/199/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/198/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/197/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/194/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/193/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/192/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/190/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/189/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/186/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/211/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/211/work,nouserxattr
+0:1312 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/4cd62a01e7ca331a1212e89f70e47e2c4a49d79c44720c2038363d6f2fafcb1d/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/229/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/228/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/227/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/226/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/225/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/224/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/223/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/222/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/221/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/220/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/219/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/218/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/217/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/216/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/233/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/233/work,nouserxattr
+0:802 / /run/containerd/io.containerd.runtime.v2.task/k8s.io/c9eb80d3b31a0f6c1b96d98db5c80c666ce69d3ebf6ed9ff83f3ac591cc54ec8/rootfs rw,relatime - overlay overlay rw,lowerdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/144/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/143/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/142/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/141/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/140/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/139/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/138/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/136/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/135/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/134/fs:/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/133/fs,upperdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/345/fs,workdir=/var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/345/work,nouserxattr
+
+[  Information Gathering - Net Namespace  ]
+	host unix-socket found, seems container started with --net=host privilege.
+
+[  Information Gathering - Sysctl Variables  ]
+
+[  Information Gathering - DNS-Based Service Discovery  ]
+error when requesting coreDNS: lookup any.any.svc.cluster.local. on [2001:4860:4860::8844]:53: read udp [fc00:f853:ccd:e793::4]:58316->[2001:4860:4860::8844]:53: i/o timeout
+error when requesting coreDNS: lookup any.any.any.svc.cluster.local. on [2001:4860:4860::8844]:53: read udp [fc00:f853:ccd:e793::4]:34080->[2001:4860:4860::8844]:53: i/o timeout
+
+[  Discovery - K8s API Server  ]
+err found while searching local K8s apiserver addr.:
+err: cannot find kubernetes api host in ENV
+	api-server forbids anonymous request.
+	response:
+
+[  Discovery - K8s Service Account  ]
+load K8s service account token error.:
+open /var/run/secrets/kubernetes.io/serviceaccount/token: no such file or directory
+
+[  Discovery - Cloud Provider Metadata API  ]
+
+[  Exploit Pre - Kernel Exploits  ]
+[+] [1;32m[CVE-2021-22555][0m Netfilter heap out-of-bounds write
+
+   Details: https://google.github.io/security-research/pocs/linux/cve-2021-22555/writeup.html
+   Exposure: less probable
+   Tags: ubuntu=20.04{kernel:5.8.0-*}
+   Download URL: https://raw.githubusercontent.com/google/security-research/master/pocs/linux/cve-2021-22555/exploit.c
+   ext-url: https://raw.githubusercontent.com/bcoles/kernel-exploits/master/CVE-2021-22555/exploit.c
+   Comments: ip_tables kernel module must be loaded
+
+
+
+[  Information Gathering - Sensitive Files  ]
+	.dockerenv - /.dockerenv
+	/.bashrc - /etc/skel/.bashrc
+	/.bashrc - /root/.bashrc
+	.kube/ - /root/.kube/cache
+	/containerd.sock - /run/containerd/containerd.sock
+	/containerd.sock - /run/containerd/containerd.sock.ttrpc
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/04f3deca06e688707206fed867d9825fcb8e614fd9414d65968b655bcc2cc720/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/0e539e38ddd66196ff692d9f67561e8e91ac6f27c4ecabb3a0ccd1e9b8cf0fd9/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/1683d173c8ffe62bada6c9ed6440024979bf86bb30dba4e53d85b630f391f408/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/235771ab289dccf1ccede3f3133ba525f7101c301a3489dfb9b0fea3691fc4d3/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/25baa98ecd0273a6ee14cea2db5994a969eecba8b53b08182e04477541abaf3e/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/25baa98ecd0273a6ee14cea2db5994a969eecba8b53b08182e04477541abaf3e/rootfs/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/26202ab307fc02862f06d4f522a489d5cd961d9195fe83386cf76a06cafd2bfc/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/29ad567f1ebf78173a8f0b2b349eb3ea79d626120df1611defbf7f11faeb8c85/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/2d41a40f0d698c61442ea679ad3c4b8dda88745941c60a8bd7c0398e23b68fab/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/2d41a40f0d698c61442ea679ad3c4b8dda88745941c60a8bd7c0398e23b68fab/rootfs/var/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/4cd62a01e7ca331a1212e89f70e47e2c4a49d79c44720c2038363d6f2fafcb1d/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/4cd62a01e7ca331a1212e89f70e47e2c4a49d79c44720c2038363d6f2fafcb1d/rootfs/var/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/5ce3696f4c6f75624961acbe2983822da1c16a7047f5b857c8b686bf43600bfe/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/5ce3696f4c6f75624961acbe2983822da1c16a7047f5b857c8b686bf43600bfe/rootfs/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/5ce3696f4c6f75624961acbe2983822da1c16a7047f5b857c8b686bf43600bfe/rootfs/usr/local/lib/node_modules/npm/docs/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/5e5dbbc00a96238ee9eeaf8a29c60284db440c12df3c886a18d2c2741622c572/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/5f43add8579f7f66a18ccd85059b742eadb6dca149d9dfebfe9c4a71c9cfb5d5/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/5f43add8579f7f66a18ccd85059b742eadb6dca149d9dfebfe9c4a71c9cfb5d5/rootfs/var/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/60d96438a429eaa7c715156fe73df51bdf5c59f356aa5a45fa8df941139717e8/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/6b86a6829f9cda157d0f0d347d57bc10a7e88d903a1af45a61673c4e863bd5b3/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/6bf81603bf46ef68e3b06e5286aa3a7d4b4ebf26f6f68fe0417ef7fe6beaebfc/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/6d24ebabb761495803bf6bcf16bbbfac679a38b8fbb5b192e92e9144239e4e05/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/6ef1ef92e87629f341b87173718a712348a7d18b53a71159ab5db8f1ea8e91ad/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/6ef1ef92e87629f341b87173718a712348a7d18b53a71159ab5db8f1ea8e91ad/rootfs/var/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/78bf1e84defd22e59cd9958dddfe3e5511fab02f47b084a310c7963fe66ff59d/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/7b2031a19985ba01562f63f1299b425b50b046367a40d19bd90382c0165d7402/config.json
+	/.bashrc - /run/containerd/io.containerd.runtime.v2.task/k8s.io/7b2031a19985ba01562f63f1299b425b50b046367a40d19bd90382c0165d7402/rootfs/etc/skel/.bashrc
+	/.bashrc - /run/containerd/io.containerd.runtime.v2.task/k8s.io/7b2031a19985ba01562f63f1299b425b50b046367a40d19bd90382c0165d7402/rootfs/root/.bashrc
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/7b2031a19985ba01562f63f1299b425b50b046367a40d19bd90382c0165d7402/rootfs/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/7c347cb726b47d390dc5e3b76547eddc9e825cc0aec10004b6a77d8a2e354542/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8215d581b1fc4b7b016783f0d7802b3cfb1220c4a70c21d40b73e92eb02fd933/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/88bd89242568588979636fe7a369bee656f156b01bc9a398e69d6858656495d0/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8a6e7b2f37b0ab0b0819948670d8b17e90aad9e11b3efc9e76e99d29dad7063c/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8b8ad7906232cd8472f5a53ee3e444c735a9c1815914f3a0a57ac26dbb9d2051/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/config.json
+	/.bashrc - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/etc/skel/.bashrc
+	/.bashrc - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/root/.bashrc
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/8be17f8323e6703db96d7da1763ab951186dd2e3cda334a28a77d8dc204807be/rootfs/usr/local/lib/python3.8/dist-packages/zmq/utils/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/955f299b40ef5166a1c15a44d5abaeba41889a6014a4d68742e4ad4526144c5c/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/a10700c03885f10883e33f1d634bb772fcb83b0eb9c22b8486e8d6275128cfd2/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/a6c44972c65f1b5a570288aff5c61feb641e3ffceb120f36bd9a5cbf901f0921/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/ae5d25a56a23f5ffc57222b7ce8dad55deb7faec9178631f5c8fece20f45cbe4/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/c10c8228c2e4f126a6b791668920bd8bd764a52de28d11df4229c95c0e0df33e/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/c9eb80d3b31a0f6c1b96d98db5c80c666ce69d3ebf6ed9ff83f3ac591cc54ec8/config.json
+	/.bashrc - /run/containerd/io.containerd.runtime.v2.task/k8s.io/c9eb80d3b31a0f6c1b96d98db5c80c666ce69d3ebf6ed9ff83f3ac591cc54ec8/rootfs/etc/skel/.bashrc
+	/.bashrc - /run/containerd/io.containerd.runtime.v2.task/k8s.io/c9eb80d3b31a0f6c1b96d98db5c80c666ce69d3ebf6ed9ff83f3ac591cc54ec8/rootfs/root/.bashrc
+	/serviceaccount - /run/containerd/io.containerd.runtime.v2.task/k8s.io/c9eb80d3b31a0f6c1b96d98db5c80c666ce69d3ebf6ed9ff83f3ac591cc54ec8/rootfs/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/e16675edf3f0b0ff08e7ab26e7505d7721d0f21401557321da695127b010f331/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/f2d959c23d680191c9f3d7635b4ef496a44f6b2de8a6273fdf6e34f5562f2ae8/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/f75679fd45ba827ed2209481225d66f4bc9c3fcdc8c5d481105b6e7ef680c5d2/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/f8cfb4e0acc86a8503a4e4012234397ddfc1ba5492ea610ac33d949ebefcdbbd/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/fbb2da1c38cda0e9ea3fe4572a1f5717dbfa964df4a520a6182053ef01c8e5df/config.json
+	/config.json - /run/containerd/io.containerd.runtime.v2.task/k8s.io/ff0c009413d5aad469e6da4521f0584d4b262b108166a428066792b25800eee8/config.json
+	/containerd/s/ - /run/containerd/s/040c5d8ff90117638938f9c71cb5ad9c83ee738ad85bf2ab90797a4982a9266d
+	/containerd/s/ - /run/containerd/s/1436966fe95e3bc28f3fbf6947ae7f6beb124744100f6a21f3c3ecdc496addd8
+	/containerd/s/ - /run/containerd/s/2b537f75da8984dcb49d001507cee0605280e687725137cf732eb09038b1184b
+	/containerd/s/ - /run/containerd/s/31f5803326b2daf3a6d23e616e2ce2789c345730f1a64a9b91ebddefecc87906
+	/containerd/s/ - /run/containerd/s/34a770ba22953322e74d1b913ba9650ea697d14434fcce6ff0be11895fc11b24
+	/containerd/s/ - /run/containerd/s/3537d034f67150dd614c5e8e6cff72ed2efdd79f728ebcb493aaa95ebe5a3f05
+	/containerd/s/ - /run/containerd/s/3bdaf9524c2d21974dc7306f6db6efc6a4d604b6c4e9c39ad62b98f5b640e771
+	/containerd/s/ - /run/containerd/s/4335278beb36494988cf3a3c5047c9d1fc0ae28d52d0f6228f249738d0ede281
+	/containerd/s/ - /run/containerd/s/58a1de0ee5dd09a0724fdb856b3560607aa5915985c2bcca47bc01069705a635
+	/containerd/s/ - /run/containerd/s/62541bfdb3f80de212e0c4708424c4ff9a331a99ef4465fff64f926c55f6070e
+	/containerd/s/ - /run/containerd/s/6aee3d76052973cba3aec399cc0b900ca37c6625d27bf94770929b145134f129
+	/containerd/s/ - /run/containerd/s/6df5b519c1d7150d46e024bc5875345b3c06f2f237fd18f24c62eeafd9138cc3
+	/containerd/s/ - /run/containerd/s/839a9ca6ff6b4e02eb262bae3eba6e9cce0070799bbb1ebbd242a14a38f476a9
+	/containerd/s/ - /run/containerd/s/85dad2436a7f65863dd054985024f3ead73ef54472507f9eb999c08a998e4e0a
+	/containerd/s/ - /run/containerd/s/8c497b6a6fdb1f1d009265c40ba02798ccdd9605d6b0546d20568989028d0bb6
+	/containerd/s/ - /run/containerd/s/997fa836b457d268b1a9c9ee78661347c22d75a6c78372cda6edc2990d58ad7b
+	/containerd/s/ - /run/containerd/s/9ea5a554be11f83355865b2d00655723e97c897df3ab688ec5793b3135c79e0b
+	/containerd/s/ - /run/containerd/s/a3c8ec2cd4ba55b357305ed2bd9ecf820d6286311bfc3ca7d94eba6fec6ec912
+	/containerd/s/ - /run/containerd/s/bb14a14cbe028d83827e73fb3c84a4b47c190ee5760fbbe0a690501aad1a92e0
+	/containerd/s/ - /run/containerd/s/c4488166f46f5f278425bca0fad3c8f4352dc5c2f092f2a2dcd970af977df6e6
+	/containerd/s/ - /run/containerd/s/db7b46f3bd9910a15658b2fefbee9e73dea9c7221cd1cd9fb128408ba41fcbae
+	/containerd/s/ - /run/containerd/s/e47848124a7849249668fdf6536efad1e37c2be6628a09d9f1f0647fca3f3d8e
+	/containerd/s/ - /run/containerd/s/ed6a4fbe1fac5747516cf30a3d3703f0255f8e40c0efbcd9fa8f75c8b6f9bfd2
+	/containerd/s/ - /run/containerd/s/f7fc19bea517de8580cf1cae2b7bab98c4c0f1e8fc2d8a446e2e02a2fbd30a65
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/101/fs/google-cloud-sdk/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/101/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/101/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/101/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/101/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/101/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/105/fs/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/114/fs/etc/skel/.bashrc
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/114/fs/root/.bashrc
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/127/fs/run/secrets/kubernetes.io/serviceaccount
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/128/fs/etc/skel/.bashrc
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/128/fs/root/.bashrc
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/133/fs/etc/skel/.bashrc
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/133/fs/root/.bashrc
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/145/fs/run/secrets/kubernetes.io/serviceaccount
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/146/fs/etc/skel/.bashrc
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/146/fs/root/.bashrc
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/147/fs/config/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/168/fs/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/170/fs/usr/local/lib/node_modules/npm/docs/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/179/fs/run/secrets/kubernetes.io/serviceaccount
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/186/fs/etc/skel/.bashrc
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/186/fs/root/.bashrc
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/202/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/.install/.backup/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/core/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/alpha/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccount.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/beta/ServiceAccountJwtAccessCredentials.yaml
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/203/fs/usr/local/gcloud/google-cloud-sdk/lib/googlecloudsdk/schemas/compute/v1/ServiceAccount.yaml
+	/config.json - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/208/fs/usr/local/lib/python3.8/dist-packages/zmq/utils/config.json
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/211/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/233/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/.bash_profile - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/234/fs/etc/skel/.bash_profile
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/234/fs/etc/skel/.bashrc
+	/.bash_profile - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/234/fs/root/.bash_profile
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/234/fs/root/.bashrc
+	/.bash_profile - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/258/fs/home/gpu-operator/.bash_profile
+	/.bashrc - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/258/fs/home/gpu-operator/.bashrc
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/345/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/368/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/373/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/374/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/375/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/376/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/377/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/378/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/379/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/380/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/381/fs/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/382/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/58/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/71/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/serviceaccount - /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/72/fs/var/run/secrets/kubernetes.io/serviceaccount
+	/config.json - /var/lib/kubelet/pods/b45165bc-3386-4847-9fd7-96c2575b2a73/volumes/kubernetes.io~configmap/config-volume/..2023_11_13_10_49_02.4117189471/config.json
+	/config.json - /var/lib/kubelet/pods/b45165bc-3386-4847-9fd7-96c2575b2a73/volumes/kubernetes.io~configmap/config-volume/config.json
+
+[  Information Gathering - ASLR  ]
+
+[  Information Gathering - Cgroups  ]
+	0::/init.scope
