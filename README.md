@@ -27,7 +27,7 @@
 
 Questo progetto di tesi magistrale mira a realizzare un'architettura distribuita altamente scalabile per carichi di lavoro di machine learning. In particolare, il sistema è stato tarato per l'analisi di sequenze di DNA e RNA, e per l'individuazione di geni di fusione.
 
-Il sistema prevede un'infrastruttura [Kubernetes](https://kubernetes.io/) su cui è possibile eseguire pipeline di machine learning e deep learning, realizzata tramite [Kubeflow](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjr6v-2w7aCAxXB7rsIHdDAB9cQFnoECAUQAQ&url=https%3A%2F%2Fwww.kubeflow.org%2F&usg=AOvVaw1tztWtYKkDzF2NfjQYKzjX&opi=89978449) e sviluppata localmente con [Kind](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj8-u-_w7aCAxUy9LsIHVkDDuoQFnoECAYQAQ&url=https%3A%2F%2Fkind.sigs.k8s.io%2F&usg=AOvVaw2TejnqsY1pFP0Qa5QJ0v6F&opi=89978449). L'architettura può essere eseguita su qualsiasi cluster Kubernetes, sia esso on-prem o cloud-native (e.g. [EKS](https://aws.amazon.com/it/eks/)). Come possibile istanza di un problema che l'architettura potrebbe accogliere, il [modello monolitico GeneFusion](https://github.com/FLaTNNBio/gene-fusion-kmer) è stato scorporato in microservizi, ognuno dei quali è stato containerizzato e reso disponibile tramite un [Docker Registry self-hosted](https://hub.docker.com/_/registry). Questi container, opportunamente orchestrati, convergono in una pipeline programmatica, robusta e sicura.
+Il sistema prevede un'infrastruttura [Kubernetes](https://kubernetes.io/) su cui è possibile eseguire pipeline di machine learning e deep learning, realizzata tramite [Kubeflow](https://www.kubeflow.org/) e sviluppata localmente con [Kind](https://kind.sigs.k8s.io/). L'architettura può essere eseguita su qualsiasi cluster Kubernetes, sia esso on-prem o cloud-native (e.g. [AWS EKS](https://aws.amazon.com/it/eks/)). Come possibile istanza di un problema che l'architettura potrebbe accogliere, i [modelli monolitici Gene Classifier e Fusion Classifier](https://github.com/FLaTNNBio/gene-fusion-kmer) sono stati scorporati in microservizi, ognuno dei quali è stato containerizzato e reso disponibile tramite un [Docker Registry self-hosted](https://hub.docker.com/_/registry). Questi container, opportunamente orchestrati, convergono in una pipeline programmatica, robusta e sicura.
 
 ## Installazione del sistema
 
@@ -91,7 +91,7 @@ docker exec -ti kind-control-plane ln -s /sbin/ldconfig /sbin/ldconfig.real
 ```
 
 5. Installare il [Kubernetes Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) per il rilevamento e l'etichettamento della disponibilità della GPU sui nodi ([NVIDIA GPU Operator](https://github.com/NVIDIA/gpu-operator#nvidia-gpu-operator)). Quest'operazione potrebbe richiedere diverso tempo.
-```console
+```
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia || true
 helm repo update
 helm install --wait --generate-name \
@@ -219,17 +219,75 @@ A prescindere da come si preleva il file `gene_classifier_pipeline.yaml`, quest'
 
 ## Sviluppo della pipeline
 
-*Il contenuto di questa sezione è temporaneo.*
+Questo progetto mira anche ad essere un punto di riferimento per i data scientists e developer che vogliono sfruttare le potenzialità di Kubernetes. Come ampiamente descritto dalla documentazione di Kubeflow, il tool permette di integrare componenti personalizzati (come, ad esempio, le due immagini Docker realizzate nell'ottica di questa attività di tesi magistrale), che fungeranno da *step* di una più vasta macchina a stati che rappresentano la spina dorsale delle pipeline di MLOps. 
 
 ### Interagire col Docker Registry
 
-Il sistema, così come installato, genera un container Docker con un Registry locale che può essere usato per caricare le immagini dei componenti della pipeline. Per caricare un'immagine nel registry, è necessario prima taggarla con il nome del registry stesso, che è `localhost:5001`. Per esempio, se si volesse caricare l'immagine `kmer-component:latest`, è necessario eseguire `docker tag kmer-component:latest localhost:5001/kmer-component:latest`. Una volta fatto, è possibile caricare l'immagine nel registry tramite `docker push localhost:5001/kmer-component:latest`.
+Il sistema, così come installato, genera due container Docker, di cui un Registry locale che può essere usato per caricare le immagini dei componenti della pipeline. Per caricare un'immagine nel registry, è necessario prima taggarla con il namespace del registry stesso, che è `localhost:5001`. Per esempio, se si volesse caricare l'immagine `kmer-component:latest`, sarebbe necessario eseguire `docker tag kmer-component:latest localhost:5001/kmer-component:latest`. Una volta fatto, sarebbe possibile caricare l'immagine nel registry tramite `docker push localhost:5001/kmer-component:latest`.
+
+> Chiaramente, utilizzare un Docker Registry privato non è l'unica opzione, né è quella consigliata, eccetto che per motivi didattici e formativi. In un ambiente di produzione, si consiglia l'impiego di [AWS Elastic Container Registry (ECR)](https://aws.amazon.com/it/ecr/) o [GCP Artifact Registry](https://cloud.google.com/artifact-registry?hl=it).
+
+A questo punto, l'immagine risulterebbe disponibile nel registry e sarebbe possibile iniettarla nella pipeline. Il container runtime dei nodi su cui è eseguito Kubeflow saranno in grado di effettuare il pull dell'immagine, recepirne l'interfaccia I/O e orchestrarne il ciclo di vita.
 
 ### Creazione dei componenti
 
-A linee generali, un componente per la pipeline dev'essere prima di tutto un'immagine Docker. Per creare un'immagine Docker, è necessario creare un file `Dockerfile` che definisca il contenuto dell'immagine stessa. Fare riferimento alla directory `docker-steps` per alcuni esempi.
+A linee generali, un componente per la pipeline dev'essere prima di tutto un'immagine Docker. Per creare un'immagine Docker, è necessario creare un file `Dockerfile` che definisca il contenuto dell'immagine stessa. Fare riferimento alla directory `docker-steps` per ulteriori esempi, e alla [Dockerfile Reference](https://docs.docker.com/engine/reference/builder/) per la documentazione ufficiale.
 
-L'immagine Docker deve quindi essere opportunamente taggata e pushata sul Docker Registry di Kind; inoltre, sarà necessario creare un file `component.yaml` che definisca il componente stesso. Di seguito un esempio di manifesto per un componente.
+```dockerfile
+# Produce un'immagine Docker parametrica che effettua il training e il testing del modello.
+
+FROM nvidia/cuda:12.2.2-base-ubuntu22.04 as cuda
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y \
+        software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y \
+        git \
+        curl
+
+RUN apt-get install -y \ 
+        python3.9 \
+        python3.9-distutils \
+        libglib2.0-0
+
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3.9 get-pip.py && \
+    python3.9 -m pip install --upgrade pip
+
+RUN python3.9 -m pip install torch \
+        torchvision \
+        torchaudio \
+        --index-url https://download.pytorch.org/whl/cu118
+
+COPY requirements.txt ./
+
+RUN sed -i '/torch==2.1.0+cu118/d' requirements.txt && \
+    sed -i '/torchaudio==2.1.0+cu118/d' requirements.txt && \
+    sed -i '/torchvision==0.16.0+cu118/d' requirements.txt
+
+RUN python3.9 -m pip install -r requirements.txt --ignore-installed
+
+FROM scratch as fs
+
+COPY --from=localhost:5001/step-dataset-generation-config:latest transformers/ /transformers
+COPY . .
+
+FROM cuda as core
+
+COPY --from=fs . .
+COPY deps/transcript_label.pkl data/inputs_model/transcript_label.pkl
+COPY deps/chimeric_label_fusion.pkl data/inputs_model/chimeric_label_fusion.pkl
+
+ENTRYPOINT python3.9 gc_handler.py
+```
+
+L'immagine Docker deve quindi essere opportunamente taggata e pushata sul Docker Registry di Kind, in modo non dissimile da come illustrato nel paragrafo [Caricare le immagini Docker](#caricare-le-immagini-docker).
+
+Infine, sarà necessario creare un file `component.yaml` che definisca il componente stesso. A linee generali, un componente ha una forma di questo tipo:
 
 ```yaml
 name: Step di esempio
@@ -240,15 +298,73 @@ implementation:
     image: localhost:5001/hello-world:linux
 ```
 
-Infine, sarà possibile iniettare il componente esemplificativo nella pipeline come segue:
+Di seguito manifesto esemplificativo per un componente.
+
+```yaml
+name: Fusion Classifier Model Training
+description: Effettua l'addestramento del modello FC
+
+inputs:
+- {name: train_csv_path, type: String, description: 'Training CSV path.'}
+- {name: val_csv_path, type: String, description: 'Validation CSV path.'}
+- {name: gc_model_path, type: String, description: 'Absolute path of the Gene Classifier H5 model.'}
+
+outputs:
+- {name: model_path, type: String, description: 'H5 Model path.'}
+
+implementation:
+  container:
+    image: localhost:5001/step-model-config:latest
+    command: [
+      python3.9,
+      'fc_handler.py',
+      -gc_model_path, 
+      {inputPath: gc_model_path},
+      -train_csv_path, 
+      {inputPath: train_csv_path},
+      -val_csv_path, 
+      {inputPath: val_csv_path},
+      -model_path, 
+      {outputPath: model_path}
+    ]
+```
+
+A questo punto, sarà possibile iniettare il componente esemplificativo nella pipeline come segue:
 
 ```python
-step_op = kfp.components.load_component_from_file("components/step/component.yaml")
+import os
+import kfp
 
-@dsl.pipeline(name="kmer-pipeline") 
-def kmer_pipeline():
-    step = step_op()
+from kfp import compiler
+from kfp.v2 import dsl
+
+'''
+Delinea i componenti della pipeline Kubeflow.
+'''
+@dsl.pipeline(name="Gene Classifier") 
+def gene_classifier():
+    gc_dataset_train_config = gc_dataset_train_config_op()
+
+    [..]
+
+    gc_model_test_config = gc_model_test_config_op(
+        test_csv_path=gc_dataset_test_config.outputs["csv_path"],
+        model_path=gc_model_train_config.outputs["model_path"]
+    ).set_gpu_limit(1)
+
+if __name__ == '__main__':
+    # Componenti Docker della pipeline Kubeflow
+    gc_dataset_train_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/dataset/train"))
+
+    [..]
+
+    gc_model_test_config_op = kfp.components.load_component_from_file(component_path("gene-classifier/model/test"))
+
+    # Compilazione della pipeline
+    compiler.Compiler().compile(gene_classifier, package_path=os.path.join(os.path.dirname(__file__), 'relics/gene_classifier_pipeline.yaml'))
 ```
+
+Eseguire lo script Python produrrà il manifesto della pipeline, che potrà essere caricato su Kubeflow come descritto nella sezione [Caricare la pipeline su Kubeflow](#caricare-la-pipeline-su-kubeflow).
 
 ## Considerazioni di MLSecOps
 
