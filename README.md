@@ -11,8 +11,10 @@
 - [Eseguire la pipeline](#eseguire-la-pipeline)
     - [Caricare le immagini Docker](#caricare-le-immagini-docker)
         - [Dataset Generation Docker Image](#dataset-generation-docker-image)
-        - [Model Training & Testing Docker Image](h#model-training--testing-docker-image)
-    - [Compilare la pipeline con Miniconda](#compilare-la-pipeline-con-miniconda)
+        - [Model Training & Testing Docker Image](#model-training--testing-docker-image)
+    - [Compilare le pipeline](#compilare-le-pipeline)
+      - [Compilazione con Docker](#compilazione-con-docker)
+      - [Compilazione con Miniconda](#compilazione-con-miniconda)
     - [Caricare la pipeline su Kubeflow](#caricare-la-pipeline-su-kubeflow)
 - [Sviluppo della pipeline](#sviluppo-della-pipeline)
   - [Interagire col Docker Registry](#interagire-col-docker-registry)
@@ -49,8 +51,6 @@ Inoltre, per garantire il supporto della GPU sono necessarie le seguenti dipende
 - [NVIDIA Drivers](https://www.nvidia.com/en-us/drivers/unix/)
 
 > Su Ubuntu, non è necessario installare i driver NVIDIA poiché pre-installati autonomamente dalla distribuzione. Tuttavia, è necessario installare il container toolkit.
-
-Infine, per quanto non sia strettamente necessario, si consiglia l'installazione di [Miniconda](https://conda.io/miniconda.html) per la gestione degli ambienti Python.
 
 ### Provisioning
 
@@ -162,24 +162,45 @@ docker build -t localhost:5001/step-model-config:latest ./docker-steps/model && 
 docker push localhost:5001/step-model-config:latest
 ```
 
-### Compilare la pipeline con Miniconda
+### Compilare le pipeline
 
 Seguire le seguenti istruzioni solo se si intende compilare manualmente la pipeline. Se si intende usare la pipeline pre-compilata, saltare direttamente alla sezione successiva.
 
-1. Creare e attivare l'ambiente Miniconda.
+Sono stati progettate due modalità per compilare le pipeline.
+- Usare Docker *(consigliato)*
+- Usare [Miniconda](https://conda.io/miniconda.html)
+
+> I seguenti esempi generano la pipeline per il modello Gene Classifier impiegando lo script `compile_gene_classifier_pipeline.py`. E' possibile generare la pipeline per il modello Fusion Classifier usando lo script `compile_fusion_classifier_pipeline.py`.
+
+#### Compilazione con Docker
+
+Eseguire il seguente comando. Il risultato sarà disponibile nella directory `kube-pipe/relics`.
+
+```console
+docker build -t flow -f kube-pipe/flow.Dockerfile kube-pipe && \
+docker run -v ./kube-pipe/relics:/relics flow compile_gene_classifier_pipeline.py
+```
+
+#### Compilazione con Miniconda
+
+1. [Installare Miniconda seguendo le istruzioni indicate sul sito](https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html).
+
+2. Creare e attivare l'ambiente Miniconda.
+
 ```
 conda create -n kf python=3.8.18
 conda activate kf
 ```
 
-2. Installare le dipendenze Python necessarie.
+3. Installare le dipendenze Python necessarie.
+
 ```
 pip install -r kube-pipe/requirements.txt
 ```
 
-3. Eseguire lo script di compilazione, il quale produrrà un artefatto nella directory `kube-pipe/relics`.
+4. Eseguire uno dei due script di compilazione, il quale produrrà un artefatto nella directory `kube-pipe/relics`.
 ```
-python kube-pipe/kmer-pipeline.py
+python kube-pipe/compile_gene_classifier_pipeline.py
 ```
 
 ### Caricare la pipeline su Kubeflow
