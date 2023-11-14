@@ -1,0 +1,32 @@
+# Questo script di load testing può essere usato per stressare il control plan di Kubernetes.
+
+config:
+  # Kind - K8s Control Plane API Server
+  target: https://127.0.0.1:39175
+  phases:
+    - duration: 10 # secondi
+      # Definisce il numero (graduale) di "virtual users" .. 
+      # .. che eseguiranno interamente gli scenari descritti.
+      # Rif. https://www.artillery.io/docs/get-started/core-concepts
+      arrivalRate: 1
+      rampTo: 5
+      name: "K8s - Warm Up"
+    - duration: 20
+      arrivalRate: 5
+      rampTo: 10
+      name: "K8s - Stretch"
+    - duration: 20
+      arrivalRate: 10
+      rampTo: 20
+      name: "K8s - Escalate"
+scenarios:
+  - flow:
+    - loop:
+      - get:
+          url: "/"
+      # Le interfacce pubbliche di Kubernetes sono raggruppate in namespaces.
+      # Rif. https://kubernetes.io/docs/concepts/overview/kubernetes-api/
+      - get:
+          url: "/api/v1"
+      - get:
+          url: "/openapi/v2"

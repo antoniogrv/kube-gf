@@ -23,6 +23,7 @@
   - [Iniezione arbitraria di CDK in un pod](#iniezione-arbitraria-di-cdk-in-un-pod)
   - [Generare un cluster Kind contagiato da CDK](#generare-un-cluster-kind-contagiato-da-cdk)
   - [Kali Linux Docker Image](#kali-linux-docker-image)
+  - [Control Plane Load Testing](#control-plane-load-testing)
 
 <hr>
 
@@ -488,3 +489,12 @@ RUN wget https://github.com/cdk-team/CDK/releases/download/v1.5.2/cdk_linux_amd6
     chmod a+x cdk_linux_amd64 && \
     mv cdk_linux_amd64 /usr/local/bin/cdk
 ```
+
+### Control Plane Load Testing
+
+Un attacco di load testing con [Artillery](https://www.artillery.io/docs) può essere condotto sul control plane di Kubernetes. Per farlo, eseguire il seguente comando, che avvierà un container Docker e alla fine del testing restituirà le metriche di esecuzione in `container-sec/logs`.
+
+```console
+docker run --rm -it --network host -v ${PWD}:/container-sec artilleryio/artillery:latest run --insecure -o /container-sec/logs/artillery_results.csv /container-sec/k8s-api-blitz.yaml
+```
+Questo tipo di attacco può essere particolarmente utile per valutare la resilienza del control plane, e la sua esigenza di essere ridondato e posto davanti ad un load balancer.
