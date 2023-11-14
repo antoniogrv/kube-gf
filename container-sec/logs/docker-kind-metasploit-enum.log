@@ -1,0 +1,433 @@
+msf6 auxiliary(cloud/kubernetes/enum_kubernetes) > run
+[*] Running module against 127.0.0.1
+Token Claims
+============
+
+  name                               value
+  ----                               -----
+  aud                                ["https://kubernetes.default.svc.cluster.local"]
+  exp                                1699984594
+  iat                                1699980994
+  iss                                https://kubernetes.default.svc.cluster.local
+  kubernetes.io.namespace            default
+  kubernetes.io.serviceaccount.name  admin-sa
+  kubernetes.io.serviceaccount.uid   9bed3ddd-a396-41ed-bfa1-4a3e4b7c1ee0
+  nbf                                1699980994
+  sub                                system:serviceaccount:default:admin-sa
+
+
+Server API Version
+==================
+
+  name          value
+  ----          -----
+  buildDate     2023-06-15T00:36:28Z
+  compiler      gc
+  gitCommit     25b4e43193bcda6c7328a6d147b1fb73a33f1598
+  gitTreeState  clean
+  gitVersion    v1.27.3
+  goVersion     go1.20.5
+  major         1
+  minor         27
+  platform      linux/amd64
+
+[+] Enumerating namespaces
+Namespaces
+==========
+
+  #  name
+  -  ----
+  0  default
+  1  gpu-operator
+  2  kube-node-lease
+  3  kube-public
+  4  kube-system
+  5  kubeflow
+  6  local-path-storage
+
+[+] Namespace 0: default
+Auth (namespace: default)
+=========================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: default)
+=========================
+
+  #  namespace  name                                 status   containers                                                            ip
+  -  ---------  ----                                 ------   ----------                                                            --
+  0  default    kubernetes-dashboard-57b69f47-jfrxt  Running  kubernetes-dashboard (image: kubernetesui/dashboard:v2.7.0 TCP:8443)  10.244.0.31
+  1  default    lucee-cfc645584-xhjx2                Running  lucee (image: lucee/lucee:5.3.7.43 TCP:8888)                          10.244.0.30
+  2  default    thinkphp-65559c546b-pq88x            Running  thinkphp (image: vulhub/thinkphp:5.0.23 TCP:80)                       10.244.0.29
+
+Secrets (namespace: default)
+============================
+
+  #   namespace  name                                        type                                 data                    age
+  -   ---------  ----                                        ----                                 ----                    ---
+  0   default    default-token                               kubernetes.io/service-account-token  ca.crt,namespace,token  57m
+  1   default    kubernetes-dashboard-certs                  Opaque                                                       14m
+  2   default    kubernetes-dashboard-csrf                   Opaque                               csrf                    14m
+  3   default    kubernetes-dashboard-key-holder             Opaque                               priv,pub                14m
+  4   default    secrets-basic-auth                          kubernetes.io/basic-auth             password,username       14m
+  5   default    secrets-dockerconfigjson                    kubernetes.io/dockerconfigjson       .dockerconfigjson       14m
+  6   default    secrets-empty                               Opaque                                                       14m
+  7   default    secrets-id-ed25519-with-passphrase          kubernetes.io/ssh-auth               ssh-privatekey          14m
+  8   default    secrets-id-ed25519-without-passphrase       kubernetes.io/ssh-auth               ssh-privatekey          14m
+  9   default    secrets-id-rsa-with-passphrase              kubernetes.io/ssh-auth               ssh-privatekey          14m
+  10  default    secrets-id-rsa-without-passphrase           kubernetes.io/ssh-auth               ssh-privatekey          14m
+  11  default    secrets-tls                                 kubernetes.io/tls                    tls.crt,tls.key         14m
+  12  default    secrets-user-password                       Opaque                               password,username       14m
+  13  default    sh.helm.release.v1.kubernetes-dashboard.v1  helm.sh/release.v1                   release                 14m
+  14  default    sh.helm.release.v1.lucee.v1                 helm.sh/release.v1                   release                 14m
+  15  default    sh.helm.release.v1.secrets.v1               helm.sh/release.v1                   release                 14m
+  16  default    sh.helm.release.v1.secrets.v2               helm.sh/release.v1                   release                 12m
+  17  default    sh.helm.release.v1.thinkphp.v1              helm.sh/release.v1                   release                 14m
+
+[+] service token default-token: /root/.msf4/loot/20231114165648_default_127.0.0.1_kubernetes.token_150380.json
+[+] basic_auth secrets-basic-auth: root:password123
+[+] dockerconfig json secrets-dockerconfigjson: /root/.msf4/loot/20231114165648_default_unknown_docker.json_917073.json
+[+] ssh_key secrets-id-ed25519-with-passphrase: /root/.msf4/loot/20231114165648_default_unknown_id_rsa_121933.txt
+[+] ssh_key secrets-id-ed25519-without-passphrase: /root/.msf4/loot/20231114165648_default_unknown_id_rsa_711718.txt
+[+] ssh_key secrets-id-rsa-with-passphrase: /root/.msf4/loot/20231114165648_default_unknown_id_rsa_286621.txt
+[+] ssh_key secrets-id-rsa-without-passphrase: /root/.msf4/loot/20231114165648_default_unknown_id_rsa_824374.txt
+[+] tls_key secrets-tls: /root/.msf4/loot/20231114165648_default_unknown_tls.key_257208.txt
+[+] tls_cert secrets-tls: /root/.msf4/loot/20231114165648_default_unknown_tls.cert_119870.crt (/CN=example.com)
+
+[+] Namespace 1: gpu-operator
+Auth (namespace: gpu-operator)
+==============================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: gpu-operator)
+==============================
+
+  #  namespace     name                                                             status     containers                                                                                       ip
+  -  ---------     ----                                                             ------     ----------                                                                                       --
+  0  gpu-operator  gpu-feature-discovery-4bhjw                                      Running    gpu-feature-discovery (image: nvcr.io/nvidia/gpu-feature-discovery:v0.8.2-ubi8)                  10.244.0.25
+  1  gpu-operator  gpu-operator-1699611486-node-feature-discovery-gc-6689cc7dpk5r5  Running    gc (image: registry.k8s.io/nfd/node-feature-discovery:v0.14.2)                                   10.244.0.20
+  2  gpu-operator  gpu-operator-1699611486-node-feature-discovery-master-8654k5wdn  Running    master (image: registry.k8s.io/nfd/node-feature-discovery:v0.14.2 TCP:8080,TCP:8081)             10.244.0.19
+  3  gpu-operator  gpu-operator-1699611486-node-feature-discovery-worker-68ml2      Running    worker (image: registry.k8s.io/nfd/node-feature-discovery:v0.14.2 TCP:8081)                      10.244.0.15
+  4  gpu-operator  gpu-operator-c68996868-8ckrj                                     Running    gpu-operator (image: nvcr.io/nvidia/gpu-operator:v23.9.0 TCP:8080)                               10.244.0.22
+  5  gpu-operator  nvidia-container-toolkit-daemonset-lllqt                         Running    nvidia-container-toolkit-ctr (image: nvcr.io/nvidia/k8s/container-toolkit:v1.14.3-ubuntu20.04)   10.244.0.18
+  6  gpu-operator  nvidia-cuda-validator-s8pc8                                      Succeeded  nvidia-cuda-validator (image: nvcr.io/nvidia/cloud-native/gpu-operator-validator:v23.9.0)        10.244.0.28
+  7  gpu-operator  nvidia-dcgm-exporter-j8w6r                                       Running    nvidia-dcgm-exporter (image: nvcr.io/nvidia/k8s/dcgm-exporter:3.2.6-3.1.9-ubuntu20.04 TCP:9400)  10.244.0.26
+  8  gpu-operator  nvidia-device-plugin-daemonset-srhqx                             Running    nvidia-device-plugin (image: nvcr.io/nvidia/k8s-device-plugin:v0.14.2-ubi8)                      10.244.0.27
+  9  gpu-operator  nvidia-operator-validator-pxlkd                                  Running    nvidia-operator-validator (image: nvcr.io/nvidia/cloud-native/gpu-operator-validator:v23.9.0)    10.244.0.24
+
+Secrets (namespace: gpu-operator)
+=================================
+
+  #  namespace     name                                           type                data     age
+  -  ---------     ----                                           ----                ----     ---
+  0  gpu-operator  sh.helm.release.v1.gpu-operator-1699611486.v1  helm.sh/release.v1  release  4d6h
+
+
+[+] Namespace 2: kube-node-lease
+Auth (namespace: kube-node-lease)
+=================================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: kube-node-lease)
+=================================
+
+  #  namespace  name  status  containers  ip
+  -  ---------  ----  ------  ----------  --
+  No rows
+
+Secrets (namespace: kube-node-lease)
+====================================
+
+  #  namespace  name  type  data  age
+  -  ---------  ----  ----  ----  ---
+  No rows
+
+
+[+] Namespace 3: kube-public
+Auth (namespace: kube-public)
+=============================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: kube-public)
+=============================
+
+  #  namespace  name  status  containers  ip
+  -  ---------  ----  ------  ----------  --
+  No rows
+
+Secrets (namespace: kube-public)
+================================
+
+  #  namespace  name  type  data  age
+  -  ---------  ----  ----  ----  ---
+  No rows
+
+
+[+] Namespace 4: kube-system
+Auth (namespace: kube-system)
+=============================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: kube-system)
+=============================
+
+  #  namespace    name                                        status   containers                                                                        ip
+  -  ---------    ----                                        ------   ----------                                                                        --
+  0  kube-system  coredns-5d78c9869d-v9hbr                    Running  coredns (image: registry.k8s.io/coredns/coredns:v1.10.1 UDP:53,TCP:53,TCP:9153)   10.244.0.9
+  1  kube-system  coredns-5d78c9869d-zhkvv                    Running  coredns (image: registry.k8s.io/coredns/coredns:v1.10.1 UDP:53,TCP:53,TCP:9153)   10.244.0.21
+  2  kube-system  etcd-kind-control-plane                     Running  etcd (image: registry.k8s.io/etcd:3.5.7-0)                                        172.18.0.2
+  3  kube-system  kindnet-2pvw5                               Running  kindnet-cni (image: docker.io/kindest/kindnetd:v20230511-dc714da8)                172.18.0.2
+  4  kube-system  kube-apiserver-kind-control-plane           Running  kube-apiserver (image: registry.k8s.io/kube-apiserver:v1.27.3)                    172.18.0.2
+  5  kube-system  kube-controller-manager-kind-control-plane  Running  kube-controller-manager (image: registry.k8s.io/kube-controller-manager:v1.27.3)  172.18.0.2
+  6  kube-system  kube-proxy-25qqp                            Running  kube-proxy (image: registry.k8s.io/kube-proxy:v1.27.3)                            172.18.0.2
+  7  kube-system  kube-scheduler-kind-control-plane           Running  kube-scheduler (image: registry.k8s.io/kube-scheduler:v1.27.3)                    172.18.0.2
+
+Secrets (namespace: kube-system)
+================================
+
+  #  namespace  name  type  data  age
+  -  ---------  ----  ----  ----  ---
+  No rows
+
+
+[+] Namespace 5: kubeflow
+Auth (namespace: kubeflow)
+==========================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: kubeflow)
+==========================
+
+  #   namespace  name                                              status     containers                                                                                                        ip
+  -   ---------  ----                                              ------     ----------                                                                                                        --
+  0   kubeflow   cache-deployer-deployment-59c7d8c975-frx24        Running    main (image: gcr.io/ml-pipeline/cache-deployer:2.0.2)                                                             10.244.0.17
+  1   kubeflow   cache-server-f866cbcb5-fvpmt                      Running    server (image: gcr.io/ml-pipeline/cache-server:2.0.2 TCP:8443)                                                    10.244.0.14
+  2   kubeflow   gene-classifier-kgpmt-1394588260                  Succeeded  main (image: gcr.io/google-containers/busybox)                                                                    
+  3   kubeflow   gene-classifier-kgpmt-3773876554                  Succeeded  main (image: gcr.io/google-containers/busybox)                                                                    
+  4   kubeflow   gene-classifier-kgpmt-524201398                   Succeeded  main (image: gcr.io/google-containers/busybox)                                                                    
+  5   kubeflow   gene-classifier-kgpmt-732608628                   Succeeded  main (image: gcr.io/google-containers/busybox)                                                                    
+  6   kubeflow   gene-classifier-kgpmt-813294177                   Succeeded  main (image: gcr.io/google-containers/busybox)                                                                    
+  7   kubeflow   metadata-envoy-deployment-58f4d869b6-lfc65        Running    container (image: gcr.io/ml-pipeline/metadata-envoy:2.0.2 TCP:9090,TCP:9901)                                      10.244.0.4
+  8   kubeflow   metadata-grpc-deployment-c568bd446-zcbkm          Running    container (image: gcr.io/tfx-oss-public/ml_metadata_store_server:1.14.0 TCP:8080)                                 10.244.0.13
+  9   kubeflow   metadata-writer-8bd95866c-b9xbc                   Running    main (image: gcr.io/ml-pipeline/metadata-writer:2.0.2)                                                            10.244.0.5
+  10  kubeflow   minio-55464b6ddb-7pqfs                            Running    minio (image: gcr.io/ml-pipeline/minio:RELEASE.2019-08-14T20-37-41Z-license-compliance TCP:9000)                  10.244.0.2
+  11  kubeflow   ml-pipeline-768c46f69c-qnllv                      Running    ml-pipeline-api-server (image: gcr.io/ml-pipeline/api-server:2.0.2 TCP:8888,TCP:8887)                             10.244.0.11
+  12  kubeflow   ml-pipeline-persistenceagent-79699ccd96-dhg56     Running    ml-pipeline-persistenceagent (image: gcr.io/ml-pipeline/persistenceagent:2.0.2)                                   10.244.0.10
+  13  kubeflow   ml-pipeline-scheduledworkflow-86458cfcdb-pcr97    Running    ml-pipeline-scheduledworkflow (image: gcr.io/ml-pipeline/scheduledworkflow:2.0.2)                                 10.244.0.8
+  14  kubeflow   ml-pipeline-ui-788dd7c4d8-sxzgz                   Running    ml-pipeline-ui (image: gcr.io/ml-pipeline/frontend:2.0.2 TCP:3000)                                                10.244.0.12
+  15  kubeflow   ml-pipeline-viewer-crd-774bcdddc-25mgn            Running    ml-pipeline-viewer-crd (image: gcr.io/ml-pipeline/viewer-crd-controller:2.0.2)                                    10.244.0.16
+  16  kubeflow   ml-pipeline-visualizationserver-8455bd6dbf-bfdgj  Running    ml-pipeline-visualizationserver (image: gcr.io/ml-pipeline/visualization-server:2.0.2 TCP:8888)                   10.244.0.3
+  17  kubeflow   mysql-7d8b8ff4f4-nhjnc                            Running    mysql (image: gcr.io/ml-pipeline/mysql:8.0.26 TCP:3306)                                                           10.244.0.23
+  18  kubeflow   node-debugger-kind-control-plane-427wb            Pending    debugger (image: antoniogrv/cdk)                                                                                  172.18.0.2
+  19  kubeflow   node-debugger-kind-control-plane-4jjk9            Succeeded  debugger (image: ubuntu)                                                                                          172.18.0.2
+  20  kubeflow   node-debugger-kind-control-plane-6zzgj            Failed     debugger (image: localhost:5001/cdk)                                                                              172.18.0.2
+  21  kubeflow   node-debugger-kind-control-plane-kjbs2            Failed     debugger (image: localhost:5001/cdk)                                                                              172.18.0.2
+  22  kubeflow   node-debugger-kind-control-plane-p9nxb            Pending    debugger (image: cdk)                                                                                             172.18.0.2
+  23  kubeflow   node-debugger-kind-control-plane-q9mdq            Succeeded  debugger (image: localhost:5001/cdk)                                                                              172.18.0.2
+  24  kubeflow   workflow-controller-589ff7c479-mncnw              Running    workflow-controller (image: gcr.io/ml-pipeline/workflow-controller:v3.3.10-license-compliance TCP:9090,TCP:6060)  10.244.0.6
+
+Secrets (namespace: kubeflow)
+=============================
+
+  #  namespace  name                       type    data                 age
+  -  ---------  ----                       ----    ----                 ---
+  0  kubeflow   mlpipeline-minio-artifact  Opaque  accesskey,secretkey  4d6h
+  1  kubeflow   mysql-secret               Opaque  password,username    4d6h
+  2  kubeflow   webhook-server-tls         Opaque  cert.pem,key.pem     4d6h
+
+
+[+] Namespace 6: local-path-storage
+Auth (namespace: local-path-storage)
+====================================
+
+  Resources                                      Non-Resource URLs                    Resource Names  Verbs
+  ---------                                      -----------------                    --------------  -----
+  *.*                                            []                                   []              [*]
+  selfsubjectreviews.authentication.k8s.io       []                                   []              [create]
+  selfsubjectaccessreviews.authorization.k8s.io  []                                   []              [create]
+  selfsubjectrulesreviews.authorization.k8s.io   []                                   []              [create]
+                                                 [*]                                  []              [*]
+                                                 [/.well-known/openid-configuration]  []              [get]
+                                                 [/api/*]                             []              [get]
+                                                 [/api]                               []              [get]
+                                                 [/apis/*]                            []              [get]
+                                                 [/apis]                              []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/healthz]                           []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/livez]                             []              [get]
+                                                 [/openapi/*]                         []              [get]
+                                                 [/openapi]                           []              [get]
+                                                 [/openid/v1/jwks]                    []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/readyz]                            []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version/]                          []              [get]
+                                                 [/version]                           []              [get]
+                                                 [/version]                           []              [get]
+
+Pods (namespace: local-path-storage)
+====================================
+
+  #  namespace           name                                     status   containers                                                                                   ip
+  -  ---------           ----                                     ------   ----------                                                                                   --
+  0  local-path-storage  local-path-provisioner-6bc4bddd6b-97q89  Running  local-path-provisioner (image: docker.io/kindest/local-path-provisioner:v20230511-dc714da8)  10.244.0.7
+
+Secrets (namespace: local-path-storage)
+=======================================
+
+  #  namespace  name  type  data  age
+  -  ---------  ----  ----  ----  ---
+  No rows
+
+
+[*] Auxiliary module execution completed

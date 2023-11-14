@@ -22,8 +22,8 @@
 - [Considerazioni di MLSecOps](#considerazioni-di-mlsecops)
   - [Iniezione arbitraria di CDK in un pod](#iniezione-arbitraria-di-cdk-in-un-pod)
   - [Generare un cluster Kind contagiato da CDK](#generare-un-cluster-kind-contagiato-da-cdk)
-  - [Kali Linux Docker Image](#kali-linux-docker-image)
-  - [Control Plane Load Testing](#control-plane-load-testing)
+  - [Kubernetes Enumeration con Kali e Metasploit](#kubernetes-enumeration-con-kali-e-metasploit)
+  - [Control Plane Load Testing con Artillery](#control-plane-load-testing-con-artillery)
 
 <hr>
 
@@ -46,7 +46,7 @@ Prima di procedere, assicurarsi di aver installato correttamente le seguenti tec
 - [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) (v0.20.0)
 - [Helm](https://helm.sh/docs/intro/install/) (v3.13.1)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) (Client v1.28.3, Server v1.27.3, Kustomize v5.0.4)
-- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) (v2.34.1)
+- [git](https://git-scm.com/)
 
 Le versioni indicate nelle parentesi rappresentano quelle adoperate per lo sviluppo del sistema. A meno di forti deprecazioni, qualsiasi versione successiva dovrebbe garantire un'installazione corretta.
 
@@ -237,6 +237,9 @@ A questo punto, l'immagine risulterebbe disponibile nel registry e sarebbe possi
 
 A linee generali, un componente per la pipeline dev'essere prima di tutto un'immagine Docker. Per creare un'immagine Docker, è necessario creare un file `Dockerfile` che definisca il contenuto dell'immagine stessa. Fare riferimento alla directory `docker-steps` per ulteriori esempi, e alla [Dockerfile Reference](https://docs.docker.com/engine/reference/builder/) per la documentazione ufficiale.
 
+<details>
+<summary>Model Training & Testing Docker Image Reference</summary>
+
 ```dockerfile
 # Produce un'immagine Docker parametrica che effettua il training e il testing del modello.
 
@@ -288,6 +291,8 @@ COPY deps/chimeric_label_fusion.pkl data/inputs_model/chimeric_label_fusion.pkl
 
 ENTRYPOINT python3.9 gc_handler.py
 ```
+
+</details>
 
 L'immagine Docker deve quindi essere opportunamente taggata e pushata sul Docker Registry di Kind, in modo non dissimile da come illustrato nel paragrafo [Caricare le immagini Docker](#caricare-le-immagini-docker).
 
@@ -441,7 +446,7 @@ users:
 
 Il file di log prodotto da `cdk eva` a partire da un nodo Kind vergine è disponibile nella directory `container-sec/logs` di questa repository.
 
-### Kali Linux Docker Image
+### Kubernetes Enumeration con Kali e Metasploit
 
 Una versione personalizzata di Kali Linux (che monta, fra le altre cose, il toolkit CDK) può essere prodotta a partire dal Dockerfile `kali.Dockerfile` presente nella directory `container-sec`. Per farlo, eseguire il seguente comando.
 
@@ -452,10 +457,13 @@ docker build -t kali-cdk --file=container-sec/kali.Dockerfile container-sec
 Per eseguire questa versione di Kali Linux, è sufficiente eseguire:
 
 ```console
-docker run -i --tty kali-cdk
+docker run --network=host -i --tty kali-cdk
 ```
 
 Di seguito la costruzione del `kali.Dockerfile`, comprensivo di CDK e delle dipendenze necessarie per l'utilizzo di Metasploit Framework.
+
+<details>
+<summary>Kali Linux Docker Image</summary>
 
 ```dockerfile
 # Produce un'immagine Docker di Kali Linux per le analisi di Container Security e l'esecuzione di attacchi di Penetration Testing.
@@ -490,11 +498,48 @@ RUN wget https://github.com/cdk-team/CDK/releases/download/v1.5.2/cdk_linux_amd6
     mv cdk_linux_amd64 /usr/local/bin/cdk
 ```
 
-### Control Plane Load Testing
+</details>
+
+Il container Kali verrà utilizzato prevalentemente come di appoggio per il software [Metasploit](https://docs.metasploit.com/), tool di exploiting e penetration testing ben noto nel settore InfoSec. In particolare, verranno utilizzati i moduli di [Kubernetes Penetration Testing](https://docs.metasploit.com/docs/pentesting/metasploit-guide-kubernetes.html) al fine di esporre le vulnerabilità del cluster Kind. Si tratta, in particolare, dei seguenti moduli:
+- [modules/auxiliary/cloud/kubernetes/enum_kubernetes](https://github.com/rapid7/metasploit-framework/blob/master/documentation/modules/auxiliary/cloud/kubernetes/enum_kubernetes.md)
+- [modules/exploit/multi/kubernetes/exec](https://github.com/rapid7/metasploit-framework/blob/master/documentation/modules/exploit/multi/kubernetes/exec.md)
+
+Per impiegare questi moduli, bisognerà prima di tutto generare un Service Account da affibbiare ad un ipotetico amministratore del cluster compromesso. Questa procedura è delinata nella sezione [Access Clusters Using the Kubernetes API](https://kubernetes.io/docs/tasks/administer-cluster/access-cluster-api/#without-kubectl-proxy) della documentazione di Kubernetes. In particolare, è sufficiente eseguire i seguenti comandi:
+  
+```
+kubectl create -n default serviceaccount admin-sa --dry-run=client -o yaml | kubectl apply -f -
+kubectl create -n default clusterrolebinding admin-sa-binding --clusterrole=cluster-admin --serviceaccount=default:admin-sa --dry-run=client -o yaml | kubectl apply -f -
+kubectl create token admin-sa
+```
+
+L'ultimo comando dovrebbe restituire un [JSON Web Token](https://jwt.io/) (JWT) necessario per autenticarsi al cluster Kubernetes. Il JWT dovrebbe avere una forma di questo tipo:
+
+<details>
+<summary>K8s API Server Cluster Admin JWT</summary>
+
+```bash
+eyJhbGciOiJSUzI1NiIsImtpZCI6IjFHQW1LbjY3U2kyNTZod0s4Q2VldWtyYnRiM2Q0WnpiYU41dzU2d3MtdG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjIzZDZmYTUxLTUyMjUtNDhiMS05ZTQwLWYxMjkwNDczY2ZmMyIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.bZm3byRsInnfHwv7XMCgBcVCfHSeIiyZGpD0OyFTerlbH60SYGlydFcFTMyNAyQMxp9hCGKqp901Ebv27eXnjGB6B7RFr3LhFQULw04ZCrcs29yv7UttSH2dBcX_GilFB9YZqlAws5cCsN31XHAC6XXVsGrCLvYhZqGiyvCeViOVSf-Pe0uSbRwycQ_Wok7bcrPn06SD89WtZRRN5PG14X9YxRv3Pojn-Tb4iA5U31HBx9vrHKJesvvPfkKUUC_7NJs7uia6up6zikbEVbXXJ76a6SsUT6zoVX13-ROlztC9R8dFi8S9sM8UjeGTL7rsP2YsAm6HTeSLrObBznzrrw
+```
+
+</details>
+
+
+A questo punto, è possibile utilizzare il modulo `enum_kubernetes` per enumerare le risorse del cluster, e in particolare i pod.
+1. Accedere a Kali con `docker run --network=host -i --tty kali-cdk`
+2. Accedere alla shell di Metasploit digitando `msfconsole`
+3. Accedere al modulo di exploit digitando `use auxiliary/scanner/http/kubernetes_enum`.
+4. Impostare l'endpoint dell'API Server di Kubernetes con `set RHOST https://127.0.0.1:39175`
+5. Impostare il JWT digitando `set TOKEN <JWT>` e sostituendo `<JWT>` con il JWT generato in precedenza
+6. Eseguire l'exploit con `run`
+
+Il software dovrebbe restituire *esattamente* le stesse risorse che si otterrebbero con `kubectl get all --all-namespaces`, mappando 1:1 l'infrastruttura Kubernetes presente sul sistema. Un log di esempio è disponibile in `container-sec/logs`.
+
+
+### Control Plane Load Testing con Artillery
 
 Un attacco di load testing con [Artillery](https://www.artillery.io/docs) può essere condotto sul control plane di Kubernetes. Per farlo, eseguire il seguente comando, che avvierà un container Docker e alla fine del testing restituirà le metriche di esecuzione in `container-sec/logs`.
 
 ```console
-docker run --rm -it --network host -v ${PWD}:/container-sec artilleryio/artillery:latest run --insecure -o /container-sec/logs/artillery_results.csv /container-sec/k8s-api-blitz.yaml
+docker run --rm -it --network=host -v ${PWD}/container-sec:/container-sec artilleryio/artillery:latest run --insecure -o /container-sec/logs/artillery-results.csv /container-sec/k8s-api-blitz.yaml
 ```
 Questo tipo di attacco può essere particolarmente utile per valutare la resilienza del control plane, e la sua esigenza di essere ridondato e posto davanti ad un load balancer.
