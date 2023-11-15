@@ -24,6 +24,7 @@
   - [Generare un cluster Kind contagiato da CDK](#generare-un-cluster-kind-contagiato-da-cdk)
   - [Kubernetes Enumeration con Kali e Metasploit](#kubernetes-enumeration-con-kali-e-metasploit)
   - [Control Plane Load Testing con Artillery](#control-plane-load-testing-con-artillery)
+- [Benchmark delle prestazioni](#benchmark-delle-prestazioni)
 
 <hr>
 
@@ -515,7 +516,7 @@ kubectl create token admin-sa
 L'ultimo comando dovrebbe restituire un [JSON Web Token](https://jwt.io/) (JWT) necessario per autenticarsi al cluster Kubernetes. Il JWT dovrebbe avere una forma di questo tipo:
 
 <details>
-<summary>K8s API Server Cluster Admin JWT</summary>
+<summary>K8s API Server Cluster Admin Dummy JWT</summary>
 
 ```bash
 eyJhbGciOiJSUzI1NiIsImtpZCI6IjFHQW1LbjY3U2kyNTZod0s4Q2VldWtyYnRiM2Q0WnpiYU41dzU2d3MtdG8ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjIzZDZmYTUxLTUyMjUtNDhiMS05ZTQwLWYxMjkwNDczY2ZmMyIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmRlZmF1bHQifQ.bZm3byRsInnfHwv7XMCgBcVCfHSeIiyZGpD0OyFTerlbH60SYGlydFcFTMyNAyQMxp9hCGKqp901Ebv27eXnjGB6B7RFr3LhFQULw04ZCrcs29yv7UttSH2dBcX_GilFB9YZqlAws5cCsN31XHAC6XXVsGrCLvYhZqGiyvCeViOVSf-Pe0uSbRwycQ_Wok7bcrPn06SD89WtZRRN5PG14X9YxRv3Pojn-Tb4iA5U31HBx9vrHKJesvvPfkKUUC_7NJs7uia6up6zikbEVbXXJ76a6SsUT6zoVX13-ROlztC9R8dFi8S9sM8UjeGTL7rsP2YsAm6HTeSLrObBznzrrw
@@ -543,3 +544,23 @@ Un attacco di load testing con [Artillery](https://www.artillery.io/docs) può e
 docker run --rm -it --network=host -v ${PWD}/container-sec:/container-sec artilleryio/artillery:latest run --insecure -o /container-sec/logs/artillery-results.csv /container-sec/k8s-api-blitz.yaml
 ```
 Questo tipo di attacco può essere particolarmente utile per valutare la resilienza del control plane, e la sua esigenza di essere ridondato e posto davanti ad un load balancer.
+
+## Benchmark delle prestazioni
+
+La repository include un Dockerfile con cui è possibile costruire un'immagine Docker dei modelli GeneFusion. Per farlo, eseguire il seguente comando:
+
+```console
+docker build -t gc-monolith --file=kube-pipe/monolith.Dockerfile .
+```
+
+Sarà quindi possibile eseguire un'esecuzione completa (inclusiva di tutti gli step della macchina a stati della pipeline, fra cui training e testing del modello) del modello Gene Classifier con il seguente comando.
+
+```console
+docker run -it --gpus all gc-monolith
+```
+
+In generale, è possibile osservare che l'implementazione a microservizi riduce concretamente i tempi di esecuzione.
+- **Architettura a microservizi:** 12m33s
+- **Architettura monolitica:** 15m19s (+22.05%)
+
+Si noti che questi dati sono basati su esecuzioni *dummy* tarate ad una singola epoca di training.
