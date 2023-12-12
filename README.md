@@ -40,6 +40,8 @@ Il bootstrap del progetto prevede la creazione di un cluster Kubernetes, l'appli
 
 ### Dipendenze
 
+> [!WARNING]
+>
 > **Questo progetto non è compatibile con ambienti Windows.** E' strettamente necessario utilizzare un ambiente Linux. Qualsiasi tentativo di far combaciare le dipendenze richieste su [WSL](https://learn.microsoft.com/it-it/windows/wsl/) potrebbe non produrre i risultati auspicati. Inoltre, si sconsiglia di utilizzare macchine virtuali che non supportino la virtualizzazione hardware della GPU (e.g. [VirtualBox](https://www.virtualbox.org/)) poiché potrebbero generare conflitti con l'installazione del sistema. Si consiglia, pertanto, di utilizzare un'installazione nativa di Linux, per quanto sia teoricamente possibile [abilitare l'accelerazione della GPU in distribuzioni WSL](https://ubuntu.com/tutorials/enabling-gpu-acceleration-on-ubuntu-on-wsl2-with-the-nvidia-cuda-platform#1-overview).
 
 Prima di procedere, assicurarsi di aver installato correttamente le seguenti tecnologie:
@@ -230,6 +232,8 @@ Questo progetto mira anche ad essere un punto di riferimento per i data scientis
 
 Il sistema, così come installato, genera due container Docker, di cui un Registry locale che può essere usato per caricare le immagini dei componenti della pipeline. Per caricare un'immagine nel registry, è necessario prima taggarla con il namespace del registry stesso, che è `localhost:5001`. Per esempio, se si volesse caricare l'immagine `kmer-component:latest`, sarebbe necessario eseguire `docker tag kmer-component:latest localhost:5001/kmer-component:latest`. Una volta fatto, sarebbe possibile caricare l'immagine nel registry tramite `docker push localhost:5001/kmer-component:latest`.
 
+> [!TIP]
+>
 > Chiaramente, utilizzare un Docker Registry privato non è l'unica opzione, né è quella consigliata, eccetto che per motivi didattici e formativi. In un ambiente di produzione, si consiglia l'impiego di [AWS Elastic Container Registry (ECR)](https://aws.amazon.com/it/ecr/) o [GCP Artifact Registry](https://cloud.google.com/artifact-registry?hl=it).
 
 A questo punto, l'immagine risulterebbe disponibile nel registry e sarebbe possibile iniettarla nella pipeline. Il container runtime dei nodi su cui è eseguito Kubeflow saranno in grado di effettuare il pull dell'immagine, recepirne l'interfaccia I/O e orchestrarne il ciclo di vita.
