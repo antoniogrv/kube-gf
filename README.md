@@ -1,5 +1,5 @@
 <div align="center">
-<img align="center" src="https://kubernetes.io/images/nav_logo2.svg" alt="logo" width="300">
+<img align="center" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/2109px-Kubernetes_logo_without_workmark.svg.png" alt="logo" width="125">
     <h3>GeneFusion over Kubernetes</h3>
     <p><b>Index Keys:</b> <a href="https://ml-ops.org/">MLOps</a>, <a href="https://mlsecops.com/">MLSecOps</a>, <a href="https://kubernetes.io/it/">Kubernetes</a>, <a href="https://www.kubeflow.org/">Kubeflow</a>
 </div>
